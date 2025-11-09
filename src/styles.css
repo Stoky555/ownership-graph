@@ -1,0 +1,92 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Base, mobile-first sizing */
+:root {
+  --page-bg: #f5f6f7;
+  --card-bg: #e5e7eb;
+  --text: #0b0b0b;
+  --brand: #2563eb;
+}
+
+/* Make body text readable on phones */
+html, body { min-height: 100%; }
+#root { min-height: 100dvh; }  /* fills viewport correctly on mobile */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  color: var(--text);
+  background: var(--page-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Single-column container with comfy padding */
+.app-shell {
+  min-height: 100dvh;         /* fill viewport; continues as content grows */
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;             /* center horizontally (no flex on body) */
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;        /* card uses full width */
+  padding: 16px;
+  box-sizing: border-box;
+
+  /* safe areas for phones with notches */
+  padding-top: max(16px, env(safe-area-inset-top));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+}
+
+/* Card that fits small screens but doesn’t stretch too wide */
+.card {
+  width: 100%;
+  background: var(--card-bg);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* Large, finger-friendly button */
+.btn {
+  display: inline-block;
+  width: 100%;
+  min-height: 44px;       /* Apple’s recommended tap target */
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: none;
+  background: var(--brand);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;         /* avoids cramped text */
+}
+.btn:active { opacity: 0.9; }
+
+/* Headings that scale a touch on wider screens */
+h1 {
+  margin: 0 0 16px 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+@media (min-width: 640px) {
+  h1 { font-size: 28px; }
+}
+
+/* Respect notches / safe areas if you add to homescreen */
+.app-shell {
+  padding-top: max(16px, env(safe-area-inset-top));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+}
+
+.card input,
+.card select,
+.card textarea,
+.card button {
+  width: 100%;
+  max-width: 100%;
+}
