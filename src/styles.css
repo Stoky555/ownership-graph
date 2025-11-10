@@ -24,7 +24,7 @@ body {
 .app-shell {
   min-height: 100dvh;         /* fill viewport; continues as content grows */
   width: 100%;
-  max-width: 480px;
+  max-width: 150dvh;
   margin: 0 auto;             /* center horizontally (no flex on body) */
 
   display: flex;
@@ -75,18 +75,34 @@ h1 {
   h1 { font-size: 28px; }
 }
 
-/* Respect notches / safe areas if you add to homescreen */
-.app-shell {
-  padding-top: max(16px, env(safe-area-inset-top));
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
-  padding-left: max(16px, env(safe-area-inset-left));
-  padding-right: max(16px, env(safe-area-inset-right));
-}
-
 .card input,
 .card select,
 .card textarea,
 .card button {
   width: 100%;
   max-width: 100%;
+}
+
+/* --- React Flow edge visibility fixes --- */
+.react-flow__edge-path,
+.react-flow__connection-path {
+  stroke: #334155 !important;   /* dark slate, visible on light bg */
+  stroke-width: 2 !important;
+}
+
+.react-flow__edge-textbg {
+  fill: #ffffff !important;     /* white label background */
+}
+
+.react-flow__edge-text {
+  fill: #111827 !important;     /* dark label text */
+  font-weight: 600;
+}
+
+/* make the little handles visible */
+.react-flow__handle {
+  width: 10px !important;
+  height: 10px !important;
+  background: #38bdf8 !important;
+  border: 2px solid #ffffff !important;
 }

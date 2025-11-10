@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { OwnedObject, Entity, Ownership } from "../domain/types";
 import { useNavigate } from "react-router-dom";
 import SectionTabs from "../components/SectionTabs";
 import NewCalcSection from "../components/NewCalcSection";
+import { mockEntities, mockObjects, mockOwnerships } from "../domain/mockData";
 
 export default function NewCalculationPage() {
     const [section, setSection] = useState<"objects" | "entities" | "ownership" | "result">("objects");
@@ -39,6 +40,29 @@ export default function NewCalculationPage() {
     // selected owner id depending on the kind
     const [ownerEntityId, setOwnerEntityId] = useState<string>("");
     const [ownerObjectOwnerId, setOwnerObjectOwnerId] = useState<string>("");
+
+    // load preset dataset
+    const loadSample = () => {
+    setObjects(mockObjects);
+    setEntities(mockEntities);
+    setOwnerships(mockOwnerships);
+    setSection("ownership");
+    };
+
+    // clear everything
+    const clearAll = () => {
+    setObjects([]);
+    setEntities([]);
+    setOwnerships([]);
+    setSection("objects");
+    };
+
+    // optional: auto-load when ?mock=1 is in the URL
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("mock") === "1") loadSample();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const onAddOwnership = () => {
         // Validate owner
@@ -82,6 +106,27 @@ export default function NewCalculationPage() {
 
     const navigate = useNavigate();
 
+    function onDeleteObject(id: string): void {
+        // remove the object
+        setObjects(prev => prev.filter(o => o.id !== id));
+        // remove any ownerships where the object is the target
+        // AND any where the object was an owner (owner.kind === "object")
+        setOwnerships(prev =>
+            prev.filter(o => o.objectId !== id && !(o.owner.kind === "object" && o.owner.id === id))
+        );
+        // if the selected target object was deleted, clear the selector
+        setSelectedObjectId(prev => (prev === id ? "" : prev));
+    }
+
+    function onRenameObject(id: string, newName: string): void {
+    const name = newName.trim();
+    if (!name) return;
+    // prevent duplicate names (case-insensitive)
+    const exists = objects.some(o => o.id !== id && o.name.toLowerCase() === name.toLowerCase());
+    if (exists) { alert("An object with that name already exists."); return; }
+    setObjects(prev => prev.map(o => (o.id === id ? { ...o, name } : o)));
+    }
+
     return (
     <main className="app-shell">
       <header style={{ marginBottom: "2rem" }}>
@@ -91,17 +136,24 @@ export default function NewCalculationPage() {
     <SectionTabs value={section} onChange={setSection} />
 
     <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-    <button
-        className="btn"
-        onClick={() => setSection("result")}
-        disabled={ownerships.length === 0}
-        style={{
-        opacity: ownerships.length === 0 ? 0.6 : 1,
-        background: "#10b981",          // green-ish
-        }}
-    >
-        ▶ Start calculation
-    </button>
+    <button className="btn" onClick={loadSample} style={{ background: "#0ea5e9" }}>
+            ⤓ Load sample data
+        </button>
+        <button className="btn" onClick={clearAll} style={{ background: "#ef4444" }}>
+            ✖ Clear all
+        </button>
+
+        <button
+            className="btn"
+            onClick={() => setSection("result")}
+            disabled={ownerships.length === 0}
+            style={{
+            opacity: ownerships.length === 0 ? 0.6 : 1,
+            background: "#10b981",
+            }}
+        >
+            ▶ Start calculation
+        </button>
     </div>
 
     <NewCalcSection
@@ -126,6 +178,8 @@ export default function NewCalculationPage() {
         selectedObjectId={selectedObjectId}
         setSelectedObjectId={setSelectedObjectId}
         onAddOwnership={onAddOwnership}
+        onRenameObject={onRenameObject}
+        onDeleteObject={onDeleteObject}
     />
 
       <button

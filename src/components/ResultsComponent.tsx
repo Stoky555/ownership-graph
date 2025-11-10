@@ -90,28 +90,11 @@ export default function ResultsComponent({ entities, objects, ownerships }: Prop
           <div style={{ marginTop: 16 }}>
           <h3 style={{ margin: "8px 0" }}>Graph</h3>
 
-          <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-            <button
-              className="btn"
-              style={{ background: graphMode === "direct" ? "var(--brand)" : "#64748b" }}
-              onClick={() => setGraphMode("direct")}
-            >
-              Direct
-            </button>
-            <button
-              className="btn"
-              style={{ background: graphMode === "indirect" ? "var(--brand)" : "#64748b" }}
-              onClick={() => setGraphMode("indirect")}
-            >
-              Indirect
-            </button>
-          </div>
-
           <GraphView
             entities={entities}
             objects={objects}
             ownerships={ownerships}
-            mode={graphMode}   // ← this switches the graph
+            centerEntityId={entities.find(e => e.name === "entity1")?.id} // or any id you choose
           />
         </div>
 

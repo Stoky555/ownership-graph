@@ -35,6 +35,8 @@ type Props = {
   selectedObjectId: string;
   setSelectedObjectId: (v: string) => void;
   onAddOwnership: () => void;
+  onRenameObject: (id: string, newName: string) => void;
+  onDeleteObject: (id: string) => void;
 };
 
 export default function NewCalcSection(props: Props) {
@@ -48,6 +50,10 @@ export default function NewCalcSection(props: Props) {
     ownershipPercent, setOwnershipPercent,
     selectedObjectId, setSelectedObjectId,
     onAddOwnership,
+
+    // ↓↓↓ ADD THESE
+    onRenameObject,
+    onDeleteObject,
   } = props;
 
   return (
@@ -58,6 +64,8 @@ export default function NewCalcSection(props: Props) {
           objectName={objectName}
           setObjectName={setObjectName}
           onAddObject={onAddObject}
+          onRenameObject={onRenameObject}   // ← add
+          onDeleteObject={onDeleteObject}   // ← add
         />
       )}
 
