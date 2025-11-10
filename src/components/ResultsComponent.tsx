@@ -94,7 +94,6 @@ export default function ResultsComponent({ entities, objects, ownerships }: Prop
             entities={entities}
             objects={objects}
             ownerships={ownerships}
-            centerEntityId={entities.find(e => e.name === "entity1")?.id} // or any id you choose
           />
         </div>
 
