@@ -106,3 +106,102 @@ h1 {
   background: #38bdf8 !important;
   border: 2px solid #ffffff !important;
 }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: .45rem .8rem;
+  font-size: .9rem;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #111827;
+  cursor: pointer;
+}
+.btn:hover { background: #e5e7eb; }
+.btn:active { transform: translateY(1px); }
+
+.btn--primary { background: #2563eb; color: white; }
+.btn--primary:hover { background: #1d4ed8; }
+
+.btn--ghost { background: transparent; border-color: #cbd5e1; }
+.btn--danger { background: #ef4444; color: white; }
+.btn--danger:hover { background: #dc2626; }
+
+.btn--sm { padding: .3rem .6rem; font-size: .85rem; }
+
+/* List rows */
+.entity-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: .5rem .75rem;
+  padding: .4rem .5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+}
+.entity-row + .entity-row { margin-top: .5rem; }
+
+.entity-name {
+  padding: .25rem .35rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.entity-name:hover { background: #f1f5f9; }
+
+.entity-edit {
+  display: flex;
+  gap: .5rem;
+  align-items: center;
+}
+
+.entity-input {
+  width: 100%;
+  padding: .5rem .6rem;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: .95rem;
+}
+
+/* Section header + inline add form */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+.inline-add {
+  display: flex;
+  gap: .5rem;
+  width: 100%;
+}
+.inline-add .entity-input { flex: 1; }
+
+/* Make sure the add row behaves the way we want */
+.inline-add .btn { width: auto; }    /* in case you have a global .btn { width:100% } somewhere */
+.inline-add .entity-input { flex: 1; }
+
+/* Tabs */
+.tabs-bar {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.tab {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #94a3b8;
+  background: #e5e7eb;
+  font-weight: 600;
+}
+.tab.is-active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}

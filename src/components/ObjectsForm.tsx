@@ -7,8 +7,6 @@ type Props = {
   objectName: string;
   setObjectName: (v: string) => void;
   onAddObject: () => void;
-
-  // NEW:
   onRenameObject: (id: string, newName: string) => void;
   onDeleteObject: (id: string) => void;
 };
@@ -21,115 +19,131 @@ export default function ObjectsForm({
   onRenameObject,
   onDeleteObject,
 }: Props) {
-  // local inline-edit state
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editingName, setEditingName] = useState("");
+  const [draftName, setDraftName] = useState("");
 
   const startEdit = (o: OwnedObject) => {
     setEditingId(o.id);
-    setEditingName(o.name);
+    setDraftName(o.name);
   };
+
+  const commitEdit = () => {
+    const name = draftName.trim();
+    if (!editingId || !name) return cancelEdit();
+    const current = objects.find(x => x.id === editingId)?.name ?? "";
+    if (name !== current) onRenameObject(editingId, name);
+    setEditingId(null);
+  };
+
   const cancelEdit = () => {
     setEditingId(null);
-    setEditingName("");
-  };
-  const saveEdit = () => {
-    if (!editingId) return;
-    onRenameObject(editingId, editingName);
-    cancelEdit();
+    setDraftName("");
   };
 
   return (
     <>
-      <h2 style={{ marginTop: 0 }}>Objects</h2>
+      <div className="section-header" style={{ marginTop: 0 }}>
+        <h2 style={{ margin: 0 }}>Objects</h2>
+      </div>
 
-      <label style={{ display: "block", fontSize: 14, marginBottom: 6 }}>
-        Object name
-      </label>
-      <input
-        value={objectName}
-        onChange={(e) => setObjectName(e.target.value)}
-        placeholder="e.g., Apartment 12A or Company XYZ"
-        style={{
-          width: "100%",
-          padding: "10px 12px",
-          borderRadius: 8,
-          border: "1px solid #cbd5e1",
-          marginBottom: 10,
-          fontSize: 16,
-        }}
-      />
-      <button className="btn" onClick={onAddObject}>Add object</button>
+      {/* Inline add row (matches EntitiesForm) */}
+      <div className="inline-add" style={{ marginTop: 8, display: "flex", gap: 8, width: "100%" }}>
+        <input
+          className="entity-input"
+          style={{ flex: 1, minWidth: 0 }}
+          value={objectName}
+          onChange={(e) => setObjectName(e.target.value)}
+          placeholder="e.g., Building A, Warehouse 12, Final Asset J"
+        />
+        <button
+          className="btn btn--primary"
+          style={{ flex: "0 0 auto" }}
+          onClick={onAddObject}
+        >
+          Add object
+        </button>
+      </div>
 
-      <div style={{ marginTop: 16 }}>
+      {/* List */}
+      <div style={{ marginTop: 14 }}>
         {objects.length === 0 ? (
           <p style={{ margin: 0, color: "#6b7280" }}>No objects yet.</p>
         ) : (
-          <ul style={{ paddingLeft: 18, margin: 0 }}>
+          <ul style={{ padding: 0, margin: 0, listStyle: "none" }}>
             {objects.map((o) => {
               const isEditing = editingId === o.id;
+
               return (
-                <li key={o.id} style={{ margin: "8px 0" }}>
-                  {!isEditing ? (
-                    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                      <span
-                        style={{ cursor: "pointer", padding: "4px 0" }}
-                        onClick={() => startEdit(o)}
-                        title="Click to edit"
-                      >
-                        {o.name}
-                      </span>
-                      <button
-                        className="btn"
-                        style={{ width: "auto", background: "#ef4444" }}
-                        onClick={() => onDeleteObject(o.id)}
-                        title="Delete"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  ) : (
-                    <div style={{ display: "grid", gap: 8 }}>
+                <li key={o.id} className="entity-row">
+                  {/* Left: name or editor */}
+                  {isEditing ? (
+                    <div className="entity-edit" style={{ gridColumn: "1 / span 1" }}>
                       <input
-                        value={editingName}
-                        onChange={(e) => setEditingName(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") saveEdit();
-                          if (e.key === "Escape") cancelEdit();
-                        }}
+                        className="entity-input"
                         autoFocus
-                        style={{
-                          width: "100%",
-                          padding: "8px 10px",
-                          borderRadius: 8,
-                          border: "1px solid #cbd5e1",
-                          fontSize: 16,
+                        value={draftName}
+                        onChange={(ev) => setDraftName(ev.target.value)}
+                        onKeyDown={(ev) => {
+                          if (ev.key === "Enter") commitEdit();
+                          if (ev.key === "Escape") cancelEdit();
                         }}
                       />
-                      <div style={{ display: "flex", gap: 8 }}>
-                        <button className="btn" style={{ width: "auto" }} onClick={saveEdit}>
+                    </div>
+                  ) : (
+                    <span
+                      className="entity-name"
+                      role="button"
+                      tabIndex={0}
+                      title="Click to rename"
+                      onClick={() => startEdit(o)}
+                      onKeyDown={(ev) => {
+                        if (ev.key === "Enter" || ev.key === " ") startEdit(o);
+                      }}
+                      style={{ gridColumn: "1 / span 1" }}
+                    >
+                      {o.name}
+                    </span>
+                  )}
+
+                  {/* Right: actions */}
+                  <div style={{ display: "flex", gap: 8 }}>
+                    {isEditing ? (
+                      <>
+                        <button className="btn btn--primary btn--sm" onClick={commitEdit}>
                           Save
                         </button>
-                        <button
-                          className="btn"
-                          style={{ width: "auto", background: "#64748b" }}
-                          onClick={cancelEdit}
-                        >
+                        <button className="btn btn--ghost btn--sm" onClick={cancelEdit}>
                           Cancel
                         </button>
                         <button
-                          className="btn"
-                          style={{ width: "auto", background: "#ef4444" }}
+                          className="btn btn--danger btn--sm"
                           onClick={() => {
-                            onDeleteObject(o.id);
-                            cancelEdit();
+                            if (confirm(`Delete "${o.name}"? This also removes related ownerships.`)) {
+                              onDeleteObject(o.id);
+                            }
                           }}
                         >
                           Delete
                         </button>
-                      </div>
-                    </div>
-                  )}
+                      </>
+                    ) : (
+                      <>
+                        <button className="btn btn--ghost btn--sm" onClick={() => startEdit(o)}>
+                          Rename
+                        </button>
+                        <button
+                          className="btn btn--danger btn--sm"
+                          onClick={() => {
+                            if (confirm(`Delete "${o.name}"? This also removes related ownerships.`)) {
+                              onDeleteObject(o.id);
+                            }
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </li>
               );
             })}

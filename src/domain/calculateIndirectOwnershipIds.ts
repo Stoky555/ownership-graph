@@ -1,16 +1,27 @@
 import type { Entity, OwnedObject, Ownership } from "./types";
 
-/**
- * Calculates total ownership of each Entity and Object in the system.
- * Returns a map:  ownerId -> { [targetObjectId]: percent }
- */
-// id-based variant for graph edges: "entity:<id>" | "object:<id>" -> { [objectId]: percent }
+/** ---------- NEW: direct (IDs) ---------- */
+export function calculateDirectOwnershipIds(
+  _entities: Entity[],
+  _objects: OwnedObject[],
+  ownerships: Ownership[]
+) {
+  // "entity:<id>" | "object:<id>" -> { [objectId]: percent }
+  const out: Record<string, Record<string, number>> = {};
+  for (const own of ownerships) {
+    const src = `${own.owner.kind}:${own.owner.id}`;
+    if (!out[src]) out[src] = {};
+    out[src][own.objectId] = (out[src][own.objectId] ?? 0) + own.percent;
+  }
+  return out;
+}
+
+/** ---------- existing: indirect (IDs) ---------- */
 export function calculateIndirectOwnershipIds(
   entities: Entity[],
   objects: OwnedObject[],
   ownerships: Ownership[]
 ) {
-  // Build adjacency list
   const adj = new Map<string, { target: string; pct: number }[]>();
   for (const own of ownerships) {
     const src = `${own.owner.kind}:${own.owner.id}`;
@@ -18,7 +29,6 @@ export function calculateIndirectOwnershipIds(
     adj.get(src)!.push({ target: own.objectId, pct: own.percent / 100 });
   }
 
-  // DFS with path accumulation; sum contributions to same target
   const results = new Map<string, Map<string, number>>();
   const dfs = (source: string, current: string, acc: number, visited: Set<string>) => {
     const edges = adj.get(current);
@@ -37,11 +47,9 @@ export function calculateIndirectOwnershipIds(
     }
   };
 
-  // start from all entities and objects
   for (const e of entities) dfs(`entity:${e.id}`, `entity:${e.id}`, 1, new Set([`entity:${e.id}`]));
   for (const o of objects)  dfs(`object:${o.id}`, `object:${o.id}`, 1, new Set([`object:${o.id}`]));
 
-  // plain object with percentages
   const out: Record<string, Record<string, number>> = {};
   for (const [src, map] of results.entries()) {
     out[src] = {};
@@ -50,20 +58,22 @@ export function calculateIndirectOwnershipIds(
   return out;
 }
 
-// readable variant: uses names instead of IDs
-export function calculateIndirectOwnershipNames(
+/** ---------- helpers to convert IDs -> names ---------- */
+function nameMaps(entities: Entity[], objects: OwnedObject[]) {
+  return {
+    entityNameById: new Map(entities.map(e => [e.id, e.name] as const)),
+    objectNameById: new Map(objects.map(o => [o.id, o.name] as const)),
+  };
+}
+
+/** ---------- NEW: direct (names) ---------- */
+export function calculateDirectOwnershipNames(
   entities: Entity[],
   objects: OwnedObject[],
   ownerships: Ownership[]
 ) {
-  // Maps for quick lookup
-  const entityNameById = new Map(entities.map(e => [e.id, e.name]));
-  const objectNameById = new Map(objects.map(o => [o.id, o.name]));
-
-  // Get indirect results using ID version
-  const idResults = calculateIndirectOwnershipIds(entities, objects, ownerships);
-
-  // Convert IDs to names
+  const { entityNameById, objectNameById } = nameMaps(entities, objects);
+  const idResults = calculateDirectOwnershipIds(entities, objects, ownerships);
   const readable: Record<string, Record<string, number>> = {};
 
   for (const [source, targets] of Object.entries(idResults)) {
@@ -74,12 +84,36 @@ export function calculateIndirectOwnershipNames(
         : objectNameById.get(id) ?? `Unknown object (${id})`;
 
     readable[sourceName] = {};
-
     for (const [targetId, pct] of Object.entries(targets)) {
       const targetName = objectNameById.get(targetId) ?? `Unknown object (${targetId})`;
       readable[sourceName][targetName] = pct;
     }
   }
+  return readable;
+}
 
+/** ---------- existing: indirect (names) ---------- */
+export function calculateIndirectOwnershipNames(
+  entities: Entity[],
+  objects: OwnedObject[],
+  ownerships: Ownership[]
+) {
+  const { entityNameById, objectNameById } = nameMaps(entities, objects);
+  const idResults = calculateIndirectOwnershipIds(entities, objects, ownerships);
+  const readable: Record<string, Record<string, number>> = {};
+
+  for (const [source, targets] of Object.entries(idResults)) {
+    const [kind, id] = source.split(":");
+    const sourceName =
+      kind === "entity"
+        ? entityNameById.get(id) ?? `Unknown entity (${id})`
+        : objectNameById.get(id) ?? `Unknown object (${id})`;
+
+    readable[sourceName] = {};
+    for (const [targetId, pct] of Object.entries(targets)) {
+      const targetName = objectNameById.get(targetId) ?? `Unknown object (${targetId})`;
+      readable[sourceName][targetName] = pct;
+    }
+  }
   return readable;
 }

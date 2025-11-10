@@ -6,8 +6,10 @@ import GraphControls from "./GraphControls";
 import { useOwnershipLayers } from "../hooks/useOwnershipLayers";
 import { buildGraph } from "../graph/buildGraph";
 import BubbleNode from "../graph/BubbleNode";
+import { SimpleBezierEdge } from "reactflow";
 
 const nodeTypes = { bubble: BubbleNode };
+const edgeTypes = { simplebezier: SimpleBezierEdge };
 
 type Props = { entities: Entity[]; objects: OwnedObject[]; ownerships: Ownership[] };
 
@@ -22,6 +24,10 @@ export default function GraphView({ entities, objects, ownerships }: Props) {
   const toggleIndirect = (id: string) => setHiddenIndirectIds(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
   const setAllDirect   = (checked: boolean) => setHiddenDirectIds(() => (checked ? new Set() : new Set(directList.map(d => d.id))));
   const setAllIndirect = (checked: boolean) => setHiddenIndirectIds(() => (checked ? new Set() : new Set(indirectList.map(d => d.id))));
+
+  const [showEdgePanels, setShowEdgePanels] = useState(true);
+  
+  const [isDragging, setIsDragging] = useState(false);
 
   // graph state
   const [nodes, setNodes] = useState<RFNode[]>([]);
@@ -42,6 +48,26 @@ export default function GraphView({ entities, objects, ownerships }: Props) {
     []
   );
 
+  const defaultEdgeOptions = useMemo(
+    () => ({
+      type: "simplebezier",
+      animated: isDragging,
+      style: { strokeWidth: 2, stroke: "#334155" },
+      labelStyle: { fontWeight: 600 },
+    }),
+    [isDragging]
+  );
+
+  const displayedEdges = useMemo(() => {
+    if (!isDragging) return edges;      // keep labels normally
+    return edges.map(e => ({
+      ...e,
+      label: undefined,                 // hide during drag for performance
+      labelBgPadding: undefined as any,
+      labelBgBorderRadius: undefined as any,
+    }));
+  }, [edges, isDragging]);
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <GraphControls
@@ -58,24 +84,25 @@ export default function GraphView({ entities, objects, ownerships }: Props) {
       <div style={{ height: 640 }}>
         <ReactFlow
           nodes={nodes}
-          edges={edges}
+          edges={displayedEdges}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           fitView
           nodesDraggable
           onNodesChange={onNodesChange}
           fitViewOptions={{ padding: 0.2 }}
           minZoom={0.2}
           proOptions={{ hideAttribution: true }}
-          defaultEdgeOptions={{
-            type: "smoothstep",
-            animated: false,
-            style: { strokeWidth: 2, stroke: "#334155" },
-            labelStyle: { fontWeight: 600 },
-          }}
+          defaultEdgeOptions={defaultEdgeOptions}
+          onNodeDrag={() => setIsDragging(true)}
+          onNodeDragStop={() => setIsDragging(false)}
+          snapToGrid
+          snapGrid={[12, 12]}
         >
           <Background />
           <Controls />
         </ReactFlow>
+
       </div>
     </div>
   );

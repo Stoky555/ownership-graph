@@ -37,6 +37,10 @@ type Props = {
   onAddOwnership: () => void;
   onRenameObject: (id: string, newName: string) => void;
   onDeleteObject: (id: string) => void;
+  onRenameEntity: (id: string, newName: string) => void;
+  onDeleteEntity: (id: string) => void;
+  onUpdateOwnership: (id: string, patch: Partial<Pick<Ownership,"owner"|"objectId"|"percent">>) => void;
+  onDeleteOwnership: (id: string) => void;
 };
 
 export default function NewCalcSection(props: Props) {
@@ -54,6 +58,11 @@ export default function NewCalcSection(props: Props) {
     // ↓↓↓ ADD THESE
     onRenameObject,
     onDeleteObject,
+
+    onRenameEntity,
+    onDeleteEntity,
+    onUpdateOwnership,
+    onDeleteOwnership,
   } = props;
 
   return (
@@ -75,6 +84,8 @@ export default function NewCalcSection(props: Props) {
           entityName={entityName}
           setEntityName={setEntityName}
           onAddEntity={onAddEntity}
+          onRenameEntity={onRenameEntity}
+          onDeleteEntity={onDeleteEntity}
         />
       )}
 
@@ -94,6 +105,8 @@ export default function NewCalcSection(props: Props) {
           selectedObjectId={selectedObjectId}
           setSelectedObjectId={setSelectedObjectId}
           onAddOwnership={onAddOwnership}
+          onUpdateOwnership={onUpdateOwnership}
+          onDeleteOwnership={onDeleteOwnership}
         />
       )}
 

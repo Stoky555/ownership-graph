@@ -119,13 +119,30 @@ export default function NewCalculationPage() {
     }
 
     function onRenameObject(id: string, newName: string): void {
-    const name = newName.trim();
-    if (!name) return;
-    // prevent duplicate names (case-insensitive)
-    const exists = objects.some(o => o.id !== id && o.name.toLowerCase() === name.toLowerCase());
-    if (exists) { alert("An object with that name already exists."); return; }
-    setObjects(prev => prev.map(o => (o.id === id ? { ...o, name } : o)));
+        const name = newName.trim();
+        if (!name) return;
+        // prevent duplicate names (case-insensitive)
+        const exists = objects.some(o => o.id !== id && o.name.toLowerCase() === name.toLowerCase());
+        if (exists) { alert("An object with that name already exists."); return; }
+        setObjects(prev => prev.map(o => (o.id === id ? { ...o, name } : o)));
     }
+
+    const onRenameEntity = (id: string, newName: string) =>
+        setEntities(prev => prev.map(e => (e.id === id ? { ...e, name: newName } : e)));
+
+    const onDeleteEntity = (id: string) => {
+        setEntities(prev => prev.filter(e => e.id !== id));
+        // also drop ownerships where this entity is the owner
+        setOwnerships(prev =>
+            prev.filter(o => !(o.owner.kind === "entity" && o.owner.id === id))
+        );
+    };
+
+    const onUpdateOwnership = (id: string, patch: Partial<Pick<Ownership,"owner"|"objectId"|"percent">>) =>
+        setOwnerships(prev => prev.map(o => o.id === id ? { ...o, ...patch } : o));
+
+    const onDeleteOwnership = (id: string) =>
+        setOwnerships(prev => prev.filter(o => o.id !== id));
 
     return (
     <main className="app-shell">
@@ -180,6 +197,10 @@ export default function NewCalculationPage() {
         onAddOwnership={onAddOwnership}
         onRenameObject={onRenameObject}
         onDeleteObject={onDeleteObject}
+        onRenameEntity={onRenameEntity}
+        onDeleteEntity={onDeleteEntity}
+        onUpdateOwnership={onUpdateOwnership}   // NEW
+        onDeleteOwnership={onDeleteOwnership}   // NEW
     />
 
       <button

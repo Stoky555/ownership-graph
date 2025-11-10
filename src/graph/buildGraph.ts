@@ -31,7 +31,7 @@ export function buildGraph({
       if (hiddenIndirectEdges.has(id) || directEdgeIds.has(id)) continue;
       edges.push({
         id, source: sourceKey, target: `object:${objectId}`,
-        type: "smoothstep",
+        type: "simplebezier",
         label: `${pct}%`,
         labelBgPadding: [6, 2],
         labelBgBorderRadius: 4,
@@ -47,7 +47,7 @@ export function buildGraph({
     const source = `${own.owner.kind}:${own.owner.id}`;
     const target = `object:${own.objectId}`;
     edges.push({
-      id: directId(own), source, target, type: "smoothstep", label: `${own.percent}%`,
+      id: directId(own), source, target, type: "simplebezier", label: `${own.percent}%`,
       style: { strokeWidth: 2, stroke: "#94a3b8", strokeDasharray: "4 2" },
       markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14 },
       labelBgPadding: [6, 2], labelBgBorderRadius: 4, labelStyle: { fontWeight: 600 },
