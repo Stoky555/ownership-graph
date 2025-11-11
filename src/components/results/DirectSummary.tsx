@@ -14,7 +14,7 @@ export default function DirectSummary({ entities, objects, ownerships }: Props) 
   }
 
   return (
-    <div style={{ display: "grid", gap: 16 }}>
+    <div className="grid gap-4">
       {objects.map((obj) => {
         const rows = byObject.get(obj.id) ?? [];
         const total = rows.reduce((s, r) => s + r.percent, 0);
@@ -30,16 +30,16 @@ export default function DirectSummary({ entities, objects, ownerships }: Props) 
           "✓ ok";
 
         return (
-          <div key={obj.id} style={{ background: "#fff", borderRadius: 8, padding: 12, border: "1px solid #e5e7eb" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
+          <div key={obj.id} className="bg-white border border-slate-200 rounded-lg p-3">
+            <div className="flex justify-between mb-2">
               <strong>{obj.name}</strong>
               <span>{status}</span>
             </div>
 
             {rows.length === 0 ? (
-              <p style={{ margin: 0, color: "#6b7280" }}>No direct owners.</p>
+              <p className="m-0 text-slate-500">No direct owners.</p>
             ) : (
-              <ul style={{ paddingLeft: 18, margin: "0 0 6px 0" }}>
+              <ul className="pl-5 mb-1.5 mt-0 list-disc">
                 {rows.map((r) => (
                   <li key={r.id}>
                     {ownerName(r)} — <strong>{r.percent}%</strong>
@@ -48,7 +48,7 @@ export default function DirectSummary({ entities, objects, ownerships }: Props) 
               </ul>
             )}
 
-            <div style={{ fontSize: 14, color: "#374151" }}>
+            <div className="text-sm text-slate-700">
               Total direct: <strong>{total}%</strong>
             </div>
           </div>

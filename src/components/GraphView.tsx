@@ -69,7 +69,7 @@ export default function GraphView({ entities, objects, ownerships }: Props) {
   }, [edges, isDragging]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+    <div className="flex flex-col gap-4">
       <GraphControls
         directList={directList}
         indirectList={indirectList}
@@ -81,7 +81,7 @@ export default function GraphView({ entities, objects, ownerships }: Props) {
         setAllIndirect={setAllIndirect}
       />
 
-      <div style={{ height: 640 }}>
+      <div className="h-[640px]">
         <ReactFlow
           nodes={nodes}
           edges={displayedEdges}
@@ -102,7 +102,6 @@ export default function GraphView({ entities, objects, ownerships }: Props) {
           <Background />
           <Controls />
         </ReactFlow>
-
       </div>
     </div>
   );

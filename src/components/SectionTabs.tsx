@@ -7,36 +7,21 @@ type Props = {
 };
 
 export default function SectionTabs({ value, onChange }: Props) {
-  return (
-    <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-      <button
-        className="btn"
-        style={{ background: value === "objects" ? "var(--brand)" : "#64748b" }}
-        onClick={() => onChange("objects")}
-      >
-        Objects
-      </button>
-      <button
-        className="btn"
-        style={{ background: value === "entities" ? "var(--brand)" : "#64748b" }}
-        onClick={() => onChange("entities")}
-      >
-        Entities
-      </button>
-      <button
-        className="btn"
-        style={{ background: value === "ownership" ? "var(--brand)" : "#64748b" }}
-        onClick={() => onChange("ownership")}
-      >
-        Ownership
-      </button>
-      <button
-        className="btn"
-        style={{ background: value === "result" ? "var(--brand)" : "#64748b" }}
-        onClick={() => onChange("result")}
-      >
-        Result
+  const tab = (k: Section, label: string) => (
+    <button
+      className={`tab ${value === k ? "is-active" : ""}`}
+      onClick={() => onChange(k)}
+    >
+      {label}
     </button>
+  );
+
+  return (
+    <div className="tabs-bar">
+      {tab("objects", "Objects")}
+      {tab("entities", "Entities")}
+      {tab("ownership", "Ownership")}
+      {tab("result", "Result")}
     </div>
   );
 }
