@@ -12,8 +12,8 @@ type Props = {
 };
 
 export default function ObjectsForm({
-  objects,
-  objectName,
+  objects = [],
+  objectName = "",
   setObjectName,
   onAddObject,
   onRenameObject,
@@ -42,42 +42,36 @@ export default function ObjectsForm({
 
   return (
     <>
-      <div className="section-header" style={{ marginTop: 0 }}>
-        <h2 style={{ margin: 0 }}>Objects</h2>
+      <div className="section-header">
+        <h2 className="m-0 text-lg font-semibold">Objects</h2>
       </div>
 
-      {/* Inline add row (matches EntitiesForm) */}
-      <div className="inline-add" style={{ marginTop: 8, display: "flex", gap: 8, width: "100%" }}>
+      <div className="inline-add">
         <input
-          className="entity-input"
-          style={{ flex: 1, minWidth: 0 }}
+          className="entity-input flex-1 min-w-0"
           value={objectName}
           onChange={(e) => setObjectName(e.target.value)}
-          placeholder="e.g., Building A, Warehouse 12, Final Asset J"
+          placeholder="e.g., Building A, Warehouse 12"
         />
         <button
-          className="btn btn--primary"
-          style={{ flex: "0 0 auto" }}
+          className="btn btn--primary w-auto flex-none"
           onClick={onAddObject}
         >
           Add object
         </button>
       </div>
 
-      {/* List */}
-      <div style={{ marginTop: 14 }}>
+      <div className="mt-3.5">
         {objects.length === 0 ? (
-          <p style={{ margin: 0, color: "#6b7280" }}>No objects yet.</p>
+          <p className="m-0 text-slate-500 text-sm">No objects yet.</p>
         ) : (
-          <ul style={{ padding: 0, margin: 0, listStyle: "none" }}>
+          <ul className="m-0 p-0 list-none">
             {objects.map((o) => {
               const isEditing = editingId === o.id;
-
               return (
                 <li key={o.id} className="entity-row">
-                  {/* Left: name or editor */}
                   {isEditing ? (
-                    <div className="entity-edit" style={{ gridColumn: "1 / span 1" }}>
+                    <div className="entity-edit col-span-1">
                       <input
                         className="entity-input"
                         autoFocus
@@ -91,7 +85,7 @@ export default function ObjectsForm({
                     </div>
                   ) : (
                     <span
-                      className="entity-name"
+                      className="entity-name col-span-1"
                       role="button"
                       tabIndex={0}
                       title="Click to rename"
@@ -99,26 +93,24 @@ export default function ObjectsForm({
                       onKeyDown={(ev) => {
                         if (ev.key === "Enter" || ev.key === " ") startEdit(o);
                       }}
-                      style={{ gridColumn: "1 / span 1" }}
                     >
                       {o.name}
                     </span>
                   )}
 
-                  {/* Right: actions */}
-                  <div style={{ display: "flex", gap: 8 }}>
+                  <div className="flex gap-2">
                     {isEditing ? (
                       <>
-                        <button className="btn btn--primary btn--sm" onClick={commitEdit}>
+                        <button className="btn btn--primary btn--sm w-auto" onClick={commitEdit}>
                           Save
                         </button>
-                        <button className="btn btn--ghost btn--sm" onClick={cancelEdit}>
+                        <button className="btn btn--ghost btn--sm w-auto" onClick={cancelEdit}>
                           Cancel
                         </button>
                         <button
-                          className="btn btn--danger btn--sm"
+                          className="btn btn--danger btn--sm w-auto"
                           onClick={() => {
-                            if (confirm(`Delete "${o.name}"? This also removes related ownerships.`)) {
+                            if (confirm(`Delete "${o.name}"? Related ownerships removed.`)) {
                               onDeleteObject(o.id);
                             }
                           }}
@@ -128,13 +120,16 @@ export default function ObjectsForm({
                       </>
                     ) : (
                       <>
-                        <button className="btn btn--ghost btn--sm" onClick={() => startEdit(o)}>
+                        <button
+                          className="btn btn--ghost btn--sm w-auto"
+                          onClick={() => startEdit(o)}
+                        >
                           Rename
                         </button>
                         <button
-                          className="btn btn--danger btn--sm"
+                          className="btn btn--danger btn--sm w-auto"
                           onClick={() => {
-                            if (confirm(`Delete "${o.name}"? This also removes related ownerships.`)) {
+                            if (confirm(`Delete "${o.name}"? Related ownerships removed.`)) {
                               onDeleteObject(o.id);
                             }
                           }}

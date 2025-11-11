@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+/*Tailwind version: 4.1.17 (Tailwind CSS v4).*/
+
+/* Design tokens */
+@theme {
+  --color-page: #f5f6f7;
+  --color-card: #e5e7eb;
+  --color-brand: #2563eb;
+
+  --radius-btn: 10px;
+  --radius-xl: 12px;
+}
+
+@layer base {
+  html, body { min-height: 100%; }
+  body {
+    @apply bg-page text-slate-800 antialiased;
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+  }
+  #root { min-height: 100dvh; }
+}
+
+@layer components {
+  .app-shell {
+    @apply min-h-dvh w-full max-w-[150dvh] mx-auto flex flex-col p-4
+           pt-[max(16px,env(safe-area-inset-top))] pb-[max(16px,env(safe-area-inset-bottom))]
+           pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))];
+  }
+
+  .card {
+    @apply w-full bg-card p-4 rounded-xl;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 w-full min-h-11 px-3.5 py-2
+           rounded-btn border border-transparent font-semibold text-sm
+           bg-brand text-white transition active:opacity-90;
+  }
+  .btn--primary { @apply bg-brand hover:bg-blue-700 text-white; }
+  .btn--ghost   { @apply bg-transparent border-slate-300 text-slate-700 hover:bg-slate-100; }
+  .btn--danger  { @apply bg-red-500 hover:bg-red-600 text-white; }
+  .btn--sm      { @apply px-2 py-1 text-xs min-h-0; }
+
+  .section-header { @apply flex items-center justify-between gap-3 mt-0; }
+  .inline-add { @apply flex gap-2 w-full mt-2; }
+  .inline-add .btn { @apply w-auto; }
+
+  .entity-input {
+    @apply w-full px-2.5 py-2 rounded-md border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+  .entity-row {
+    @apply grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-2 px-2 py-1.5
+           border border-slate-200 rounded-md bg-white;
+  }
+  .entity-row + .entity-row { @apply mt-2; }
+  .entity-name { @apply px-1.5 py-1 rounded hover:bg-slate-100 cursor-pointer; }
+  .entity-edit { @apply flex items-center gap-2; }
+
+  .tabs-bar { @apply grid grid-flow-col gap-2 mb-3; }
+  .tab { @apply px-3 py-2 rounded-lg border border-slate-400 bg-slate-200 font-semibold text-sm; }
+  .tab.is-active { @apply bg-brand text-white border-brand; }
+}
+
+@layer utilities {
+  /* custom utilities if needed later */
+}
