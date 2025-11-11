@@ -23,10 +23,7 @@ export default function GraphView({ entities, objects, ownerships }: Props) {
   const toggleDirect   = (id: string) => setHiddenDirectIds(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
   const toggleIndirect = (id: string) => setHiddenIndirectIds(p => { const n = new Set(p); n.has(id) ? n.delete(id) : n.add(id); return n; });
   const setAllDirect   = (checked: boolean) => setHiddenDirectIds(() => (checked ? new Set() : new Set(directList.map(d => d.id))));
-  const setAllIndirect = (checked: boolean) => setHiddenIndirectIds(() => (checked ? new Set() : new Set(indirectList.map(d => d.id))));
-
-  const [showEdgePanels, setShowEdgePanels] = useState(true);
-  
+  const setAllIndirect = (checked: boolean) => setHiddenIndirectIds(() => (checked ? new Set() : new Set(indirectList.map(d => d.id))));  
   const [isDragging, setIsDragging] = useState(false);
 
   // graph state

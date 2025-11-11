@@ -82,12 +82,14 @@ export default function AllOwnershipTables({
           Clear
         </button>
 
-        <ScopeToggle label="Direct" checked={scope.direct} onChange={(v) => setScope((s) => ({ ...s, direct: v }))} />
-        <ScopeToggle label="Indirect" checked={scope.indirect} onChange={(v) => setScope((s) => ({ ...s, indirect: v }))} />
-        <ScopeToggle label="Direct • Obj" checked={scope.directGroupedObject} onChange={(v) => setScope((s) => ({ ...s, directGroupedObject: v }))} />
-        <ScopeToggle label="Direct • Owner" checked={scope.directGroupedOwner} onChange={(v) => setScope((s) => ({ ...s, directGroupedOwner: v }))} />
-        <ScopeToggle label="Indirect • Obj" checked={scope.indirectGroupedObject} onChange={(v) => setScope((s) => ({ ...s, indirectGroupedObject: v }))} />
-        <ScopeToggle label="Indirect • Owner" checked={scope.indirectGroupedOwner} onChange={(v) => setScope((s) => ({ ...s, indirectGroupedOwner: v }))} />
+        <div className="flex flex-wrap gap-2">
+          <ScopeToggle label="Direct" checked={scope.direct} onChange={(v) => setScope((s) => ({ ...s, direct: v }))} />
+          <ScopeToggle label="Indirect" checked={scope.indirect} onChange={(v) => setScope((s) => ({ ...s, indirect: v }))} />
+          <ScopeToggle label="Direct • Obj" checked={scope.directGroupedObject} onChange={(v) => setScope((s) => ({ ...s, directGroupedObject: v }))} />
+          <ScopeToggle label="Direct • Owner" checked={scope.directGroupedOwner} onChange={(v) => setScope((s) => ({ ...s, directGroupedOwner: v }))} />
+          <ScopeToggle label="Indirect • Obj" checked={scope.indirectGroupedObject} onChange={(v) => setScope((s) => ({ ...s, indirectGroupedObject: v }))} />
+          <ScopeToggle label="Indirect • Owner" checked={scope.indirectGroupedOwner} onChange={(v) => setScope((s) => ({ ...s, indirectGroupedOwner: v }))} />
+        </div>
       </div>
 
       {/* Flat tables */}
@@ -107,9 +109,28 @@ function ScopeToggle({
   label, checked, onChange,
 }: { label: string; checked: boolean; onChange: (v: boolean) => void; }) {
   return (
-    <label className={`scope-chip ${checked ? "scope-chip--on" : "scope-chip--off"}`}>
-      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="m-0" />
-      {label}
+    <label className="inline-flex items-center select-none">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="peer sr-only"
+      />
+      <span
+        className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium border transition
+                   bg-white text-slate-700 border-slate-300 shadow-sm
+                   peer-checked:bg-emerald-600 peer-checked:text-white peer-checked:border-emerald-600
+                   peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-emerald-500/60"
+      >
+        <svg
+          viewBox="0 0 20 20"
+          aria-hidden="true"
+          className="h-3.5 w-3.5 opacity-0 peer-checked:opacity-100 transition text-white"
+        >
+          <path fill="currentColor" d="M8.143 14.314 3.57 9.742l1.414-1.414 3.159 3.159 6.873-6.873 1.414 1.414z" />
+        </svg>
+        {label}
+      </span>
     </label>
   );
 }

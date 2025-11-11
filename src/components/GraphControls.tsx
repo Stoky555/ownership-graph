@@ -28,14 +28,24 @@ export default function GraphControls({
     <div className="flex flex-col gap-3">
       {/* Toggle edge table visibility */}
       <div className="flex items-center gap-2">
-        <label className="inline-flex items-center gap-2">
+        <label className="inline-flex items-center gap-3 select-none">
           <input
             type="checkbox"
             checked={showEdgePanels}
             onChange={(e) => setShowEdgePanels(e.target.checked)}
-            className="accent-blue-600"
+            className="peer sr-only"
           />
-          <span>Show edge tables</span>
+          <span
+            className="relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full bg-slate-300 transition-colors
+                       peer-checked:bg-emerald-500 peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-emerald-500/60"
+            aria-hidden="true"
+          >
+            <span
+              className="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform
+                         peer-checked:translate-x-5"
+            />
+          </span>
+          <span className="text-sm font-medium text-slate-700">Show edge tables</span>
         </label>
       </div>
 

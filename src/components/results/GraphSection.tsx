@@ -10,7 +10,7 @@ type Props = {
 export default function GraphSection({ entities, objects, ownerships }: Props) {
   return (
     <div>
-      <h3 className="mt-0">Graph</h3>
+      <h2 className="m-0 text-lg font-semibold">Graph</h2>
       <GraphView entities={entities} objects={objects} ownerships={ownerships} />
     </div>
   );

@@ -35,7 +35,7 @@ export default function ResultsComponent({ entities, objects, ownerships }: Prop
 
   return (
     <div>
-      <h2 className="mt-0">Results</h2>
+      <h2 className="m-0 text-lg font-semibold">Results</h2>
       <Tabs
         tabs={[
           { key: "tables", label: "Ownership tables" },

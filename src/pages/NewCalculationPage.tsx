@@ -145,23 +145,26 @@ export default function NewCalculationPage() {
         <h1 className="text-2xl sm:text-3xl font-extrabold">New Calculation</h1>
       </header>
 
+      {/* Keep tabs visible on result. If you want to hide them too, wrap in section !== "result". */}
       <SectionTabs value={section} onChange={setSection} />
 
-      <div className="flex gap-2 mb-3">
-        <button className="btn w-auto bg-cyan-500 hover:bg-cyan-600" onClick={loadSample}>
-          ⤓ Load sample data
-        </button>
-        <button className="btn w-auto btn--danger" onClick={clearAll}>
-          ✖ Clear all
-        </button>
-        <button
-          className="btn w-auto bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed"
-          onClick={() => setSection("result")}
-          disabled={ownerships.length === 0}
-        >
-          ▶ Start calculation
-        </button>
-      </div>
+      {section !== "result" && (
+        <div className="flex gap-2 mb-3">
+          <button className="btn w-auto bg-cyan-500 hover:bg-cyan-600" onClick={loadSample}>
+            ⤓ Load sample data
+          </button>
+          <button className="btn w-auto btn--danger" onClick={clearAll}>
+            ✖ Clear all
+          </button>
+          <button
+            className="btn w-auto bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed"
+            onClick={() => setSection("result")}
+            disabled={ownerships.length === 0}
+          >
+            ▶ Start calculation
+          </button>
+        </div>
+      )}
 
       <NewCalcSection
         section={section}
