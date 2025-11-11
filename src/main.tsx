@@ -4,9 +4,12 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import "./styles/tailwind.css"
 
+// Use Vite BASE_URL if available, fallback to "/"
+const basename = (import.meta as any)?.env?.BASE_URL ?? "/";
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <BrowserRouter basename={basename}>
       <App />
     </BrowserRouter>
   </StrictMode>,
