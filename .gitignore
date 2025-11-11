@@ -1,5 +1,5 @@
 # Logs
-logs
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,21 +7,35 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Dependencies
+node_modules/
 
-# Editor directories and files
+# Build outputs (Vite uses docs/, keep it tracked for GitHub Pages)
+dist/
+dist-ssr/
+
+# Local env / config
+*.local
+.env*
+!.env.example
+
+# Editor
 .vscode/*
 !.vscode/extensions.json
-.idea
+.idea/
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-docs/assets/index-BHLhdc_T.css
-docs/assets/index-9Adnl-Pj.js
-docs/.nojekyll
+
+# TypeScript build info (if ever generated)
+*.tsbuildinfo
+
+# Optional: if you generate coverage or reports
+coverage/
+reports/
+
+# Keep docs/ (GitHub Pages). If you want to ignore source maps inside docs uncomment:
+# docs/**/*.map
