@@ -3,9 +3,8 @@ import { calculateDirectOwnershipNames, calculateIndirectOwnershipNames } from "
 import type { Entity, OwnedObject, Ownership } from "../domain/types";
 
 import Tabs from "./ui/Tabs";
-import DirectSummary from "./results/DirectSummary";
 import GraphSection from "./results/GraphSection";
-import TotalsPanel from "./results/TotalsPanel";
+import AllOwnershipTables from "./results/AllOwnershipTables";
 
 type Props = {
   entities: Entity[];
@@ -14,11 +13,6 @@ type Props = {
 };
 
 export default function ResultsComponent({ entities, objects, ownerships }: Props) {
-  const totals = useMemo(
-    () => calculateIndirectOwnershipNames(entities, objects, ownerships),
-    [entities, objects, ownerships]
-  );
-
   const directTotals = useMemo(
     () => calculateDirectOwnershipNames(entities, objects, ownerships),
     [entities, objects, ownerships]
@@ -28,8 +22,7 @@ export default function ResultsComponent({ entities, objects, ownerships }: Prop
     [entities, objects, ownerships]
   );
 
-
-  const [tab, setTab] = useState<"direct" | "indirect" | "graph">("direct");
+  const [tab, setTab] = useState<"tables" | "graph">("tables");
 
   if (ownerships.length === 0) {
     return (
@@ -43,24 +36,27 @@ export default function ResultsComponent({ entities, objects, ownerships }: Prop
   return (
     <div>
       <h2 style={{ marginTop: 0 }}>Results</h2>
-
       <Tabs
         tabs={[
-          { key: "direct", label: "Direct summary" },
-          { key: "indirect", label: "Indirect totals" },
+          { key: "tables", label: "Ownership tables" },
           { key: "graph", label: "Graph" },
         ]}
         value={tab}
         onChange={(k) => setTab(k as typeof tab)}
       >
-        {/* Panel 1: Direct */}
-        <DirectSummary entities={entities} objects={objects} ownerships={ownerships} />
+        {tab === "tables" && (
+          <AllOwnershipTables
+            entities={entities}
+            objects={objects}
+            ownerships={ownerships}
+            directTotals={directTotals as any}
+            indirectTotals={indirectTotals as any}
+          />
+        )}
 
-        {/* Panel 2: both totals */}
-        <TotalsPanel direct={directTotals} indirect={indirectTotals} />
-
-        {/* Panel 3: Graph */}
-        <GraphSection entities={entities} objects={objects} ownerships={ownerships} />
+        {tab === "graph" && (
+          <GraphSection entities={entities} objects={objects} ownerships={ownerships} />
+        )}
       </Tabs>
     </div>
   );
