@@ -145,14 +145,30 @@ export default function AllOwnershipTables({
       </div>
 
       {/* Flat tables */}
-      <OwnershipTable title="Direct Ownership Connections" rows={directRowsFiltered} />
-      <OwnershipTable title="Indirect Ownership Connections" rows={indirectRowsFiltered} />
+      {scope.direct && (
+        <OwnershipTable title="Direct Ownership Connections" rows={directRowsFiltered} />
+      )}
+      {scope.indirect && (
+        <OwnershipTable title="Indirect Ownership Connections" rows={indirectRowsFiltered} />
+      )}
 
       {/* Grouped tables */}
-      <GroupList title="Direct grouped by Object" groups={directByObject} label="Owner" />
-      <GroupList title="Direct grouped by Owner (Entity/Object)" groups={directByOwner} label="Object" />
-      <GroupList title="Indirect grouped by Object" groups={indirectByObject} label="Owner" />
-      <GroupList title="Indirect grouped by Owner" groups={indirectByOwner} label="Object" />
+      {scope.directGroupedObject && (
+        <GroupList title="Direct grouped by Object" groups={directByObject} label="Owner" />
+      )}
+      {scope.directGroupedOwner && (
+        <GroupList
+          title="Direct grouped by Owner (Entity/Object)"
+          groups={directByOwner}
+          label="Object"
+        />
+      )}
+      {scope.indirectGroupedObject && (
+        <GroupList title="Indirect grouped by Object" groups={indirectByObject} label="Owner" />
+      )}
+      {scope.indirectGroupedOwner && (
+        <GroupList title="Indirect grouped by Owner" groups={indirectByOwner} label="Object" />
+      )}
     </div>
   );
 }
