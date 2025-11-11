@@ -149,11 +149,11 @@ export default function NewCalculationPage() {
       <SectionTabs value={section} onChange={setSection} />
 
       {section !== "result" && (
-        <div className="flex gap-2 mb-3">
-          <button className="btn w-auto bg-cyan-500 hover:bg-cyan-600" onClick={loadSample}>
+        <div className="flex flex-wrap gap-2 mb-3">
+          <button className="btn btn--sm w-auto bg-cyan-500 hover:bg-cyan-600" onClick={loadSample}>
             ⤓ Load sample data
           </button>
-          <button className="btn w-auto btn--danger" onClick={clearAll}>
+          <button className="btn btn--sm w-auto btn--danger" onClick={clearAll}>
             ✖ Clear all
           </button>
           <button

@@ -36,14 +36,16 @@
   }
 
   .btn {
-    @apply inline-flex items-center justify-center gap-2 w-full min-h-11 px-3.5 py-2
-           rounded-btn border border-transparent font-semibold text-sm
-           bg-brand text-white transition active:opacity-90;
+    @apply inline-flex items-center justify-center gap-2 w-full
+           px-2.5 py-1.5 min-h-9 text-xs rounded-btn border border-transparent font-semibold
+           bg-brand text-white transition active:opacity-90
+           sm:px-3.5 sm:py-2 sm:min-h-11 sm:text-sm;
   }
   .btn--primary { @apply bg-brand hover:bg-blue-700 text-white; }
   .btn--ghost   { @apply bg-transparent border-slate-300 text-slate-700 hover:bg-slate-100; }
   .btn--danger  { @apply bg-red-500 hover:bg-red-600 text-white; }
   .btn--sm      { @apply px-2 py-1 text-xs min-h-0; }
+  .btn--xs      { @apply px-1.5 py-1 text-[11px] min-h-0 gap-1; }
 
   .section-header { @apply flex items-center justify-between gap-3 mt-0; }
   .inline-add { @apply flex gap-2 w-full mt-2; }
@@ -60,25 +62,24 @@
   .entity-name { @apply px-1.5 py-1 rounded hover:bg-slate-100 cursor-pointer; }
   .entity-edit { @apply flex items-center gap-2; }
 
-  .tabs-bar { @apply grid grid-flow-col gap-2 mb-3; }
-  .tab { @apply px-3 py-2 rounded-lg border border-slate-400 bg-slate-200 font-semibold text-sm; }
+  .tabs-bar { @apply flex flex-wrap items-center gap-1.5 mb-3; }
+  .tab { @apply px-2.5 py-1.5 rounded-lg border border-slate-400 bg-slate-200 font-semibold text-xs whitespace-nowrap sm:text-sm; }
   .tab.is-active { @apply bg-brand text-white border-brand; }
 
   .ownership-add {
-    @apply grid w-full mt-2 gap-2
-           grid-cols-[minmax(120px,1fr)_minmax(160px,2fr)_minmax(120px,1fr)_minmax(160px,2fr)_auto];
+    @apply grid w-full gap-2;
   }
   .ownership-edit {
     @apply grid gap-2
            grid-cols-[minmax(110px,1fr)_minmax(160px,2fr)_minmax(120px,1fr)_minmax(160px,2fr)];
   }
   .radio-group {
-    @apply flex items-center gap-3 px-3 py-2 rounded-md border border-slate-300 bg-white;
+    @apply w-full flex items-center gap-3 px-3 py-2 rounded-md border border-slate-300 bg-white;
   }
 
   /* Generic panel */
   .panel { @apply bg-white border border-slate-200 rounded-lg overflow-hidden; }
-  .panel-header { @apply px-3.5 py-2.5 font-semibold border-b border-slate-200 flex items-center justify-between; }
+  .panel-header { @apply px-2.5 py-2 sm:px-3.5 sm:py-2.5 font-semibold border-b border-slate-200 flex items-center justify-between; }
   .panel-content { @apply p-3; }
 
   /* Graph control buttons */
@@ -92,7 +93,7 @@
 
   /* Table styles */
   .table-wrap { @apply overflow-x-auto; }
-  .tbl { @apply w-full min-w-[520px] text-sm [border-collapse:collapse] table-fixed; }
+  .tbl { @apply w-full min-w-[420px] text-sm border-collapse table-fixed; }
   .th { @apply text-left font-semibold text-slate-900 border-b border-slate-200 px-3 py-2; }
   .td { @apply text-slate-900 border-b border-slate-100 px-3 py-2 align-top; }
   .tr-alt { @apply bg-slate-50; }

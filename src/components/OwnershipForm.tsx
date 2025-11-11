@@ -100,8 +100,8 @@ export default function OwnershipForm({
         <h2 className="m-0 text-lg font-semibold">Ownership</h2>
       </div>
 
-      <div className="ownership-add">
-        <div className="radio-group">
+      <div className="ownership-add grid-cols-1 sm:grid-cols-[minmax(140px,1fr)_minmax(0,1.6fr)_minmax(120px,1fr)_minmax(0,1.6fr)_auto]">
+        <div className="radio-group col-span-full sm:col-span-1">
           <label className="flex items-center gap-1.5">
             <input
               type="radio"
@@ -128,7 +128,7 @@ export default function OwnershipForm({
 
         {ownerKind === "entity" ? (
           <select
-            className="entity-input"
+            className="entity-input w-full min-w-0 col-span-full sm:col-span-1"
             value={ownerEntityId}
             onChange={(e) => setOwnerEntityId(e.target.value)}
           >
@@ -137,7 +137,7 @@ export default function OwnershipForm({
           </select>
         ) : (
           <select
-            className="entity-input"
+            className="entity-input w-full min-w-0 col-span-full sm:col-span-1"
             value={ownerObjectOwnerId}
             onChange={(e) => setOwnerObjectOwnerId(e.target.value)}
           >
@@ -147,7 +147,7 @@ export default function OwnershipForm({
         )}
 
         <input
-          className="entity-input"
+          className="entity-input w-full min-w-0 col-span-full sm:col-span-1"
           type="number"
           inputMode="decimal"
           min="0" max="100" step="0.01"
@@ -157,7 +157,7 @@ export default function OwnershipForm({
         />
 
         <select
-          className="entity-input"
+          className="entity-input w-full min-w-0 col-span-full sm:col-span-1"
           value={selectedObjectId}
           onChange={(e) => setSelectedObjectId(e.target.value)}
         >
@@ -165,7 +165,9 @@ export default function OwnershipForm({
           {objects.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
         </select>
 
-        <button className="btn btn--primary w-auto" onClick={onAddOwnership}>Add ownership</button>
+        <button className="btn btn--primary col-span-full sm:col-span-1 w-full sm:w-auto" onClick={onAddOwnership}>
+          Add ownership
+        </button>
       </div>
 
       <div className="mt-3.5">
