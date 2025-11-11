@@ -96,42 +96,36 @@ export default function OwnershipForm({
 
   return (
     <>
-      <div className="section-header" style={{ marginTop: 0 }}>
-        <h2 style={{ margin: 0 }}>Ownership</h2>
+      <div className="section-header">
+        <h2 className="m-0 text-lg font-semibold">Ownership</h2>
       </div>
 
-      {/* Inline add row — styled like other forms */}
-      <div className="inline-add" style={{
-        marginTop: 8,
-        display: "grid",
-        gap: 8,
-        gridTemplateColumns: "minmax(120px, 1fr) minmax(160px, 2fr) minmax(120px, 1fr) minmax(160px, 2fr) auto"
-      }}>
-        {/* owner kind */}
-        <div className="entity-input" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 12px" }}>
-          <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+      <div className="ownership-add">
+        <div className="radio-group">
+          <label className="flex items-center gap-1.5">
             <input
               type="radio"
               name="add_ownerKind"
               value="entity"
               checked={ownerKind === "entity"}
               onChange={() => { setOwnerKind("entity"); setOwnerObjectOwnerId(""); }}
+              className="accent-blue-600"
             />
             Entity
           </label>
-          <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <label className="flex items-center gap-1.5">
             <input
               type="radio"
               name="add_ownerKind"
               value="object"
               checked={ownerKind === "object"}
               onChange={() => { setOwnerKind("object"); setOwnerEntityId(""); }}
+              className="accent-blue-600"
             />
             Object
           </label>
         </div>
 
-        {/* owner select */}
         {ownerKind === "entity" ? (
           <select
             className="entity-input"
@@ -152,7 +146,6 @@ export default function OwnershipForm({
           </select>
         )}
 
-        {/* percent */}
         <input
           className="entity-input"
           type="number"
@@ -163,7 +156,6 @@ export default function OwnershipForm({
           placeholder="e.g., 25"
         />
 
-        {/* target object */}
         <select
           className="entity-input"
           value={selectedObjectId}
@@ -173,24 +165,21 @@ export default function OwnershipForm({
           {objects.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
         </select>
 
-        <button className="btn btn--primary" onClick={onAddOwnership}>Add ownership</button>
+        <button className="btn btn--primary w-auto" onClick={onAddOwnership}>Add ownership</button>
       </div>
 
-      {/* List */}
-      <div style={{ marginTop: 14 }}>
+      <div className="mt-3.5">
         {ownerships.length === 0 ? (
-          <p style={{ margin: 0, color: "#6b7280" }}>No ownership entries yet.</p>
+          <p className="m-0 text-slate-500">No ownership entries yet.</p>
         ) : (
-          <ul style={{ padding: 0, margin: 0, listStyle: "none" }}>
+          <ul className="m-0 p-0 list-none">
             {ownerships.map((o) => {
               const isEditing = editingId === o.id;
-
               return (
                 <li key={o.id} className="entity-row">
-                  {/* left cell: display or editor */}
                   {!isEditing ? (
                     <span
-                      className="entity-name"
+                      className="entity-name col-span-1"
                       role="button"
                       tabIndex={0}
                       title="Click to edit"
@@ -198,38 +187,36 @@ export default function OwnershipForm({
                       onKeyDown={(ev) => {
                         if (ev.key === "Enter" || ev.key === " ") beginEdit(o);
                       }}
-                      style={{ gridColumn: "1 / span 1" }}
                     >
                       <strong>{ownerLabel(o)}</strong> → <strong>{objectLabel(o)}</strong> ({o.percent}%)
                     </span>
                   ) : (
-                    <div className="entity-edit" style={{ gridColumn: "1 / span 1", display: "grid", gap: 8,
-                      gridTemplateColumns: "minmax(110px,1fr) minmax(160px,2fr) minmax(120px,1fr) minmax(160px,2fr)" }}>
-                      {/* owner kind */}
-                      <div className="entity-input" style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px" }}>
-                        <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <div className="entity-edit ownership-edit col-span-1">
+                      <div className="radio-group">
+                        <label className="flex items-center gap-1.5">
                           <input
                             type="radio"
                             name={`edit_kind_${o.id}`}
                             value="entity"
                             checked={draftKind === "entity"}
                             onChange={() => setDraftKind("entity")}
+                            className="accent-blue-600"
                           />
                           Entity
                         </label>
-                        <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <label className="flex items-center gap-1.5">
                           <input
                             type="radio"
                             name={`edit_kind_${o.id}`}
                             value="object"
                             checked={draftKind === "object"}
                             onChange={() => setDraftKind("object")}
+                            className="accent-blue-600"
                           />
                           Object
                         </label>
                       </div>
 
-                      {/* owner select */}
                       {draftKind === "entity" ? (
                         <select
                           className="entity-input"
@@ -248,7 +235,6 @@ export default function OwnershipForm({
                         </select>
                       )}
 
-                      {/* percent */}
                       <input
                         className="entity-input"
                         type="number"
@@ -256,10 +242,12 @@ export default function OwnershipForm({
                         min="0" max="100" step="0.01"
                         value={draftPercent}
                         onChange={(e) => setDraftPercent(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") cancelEdit(); }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") saveEdit();
+                          if (e.key === "Escape") cancelEdit();
+                        }}
                       />
 
-                      {/* object */}
                       <select
                         className="entity-input"
                         value={draftObjectId}
@@ -270,16 +258,15 @@ export default function OwnershipForm({
                     </div>
                   )}
 
-                  {/* right cell: actions */}
-                  <div style={{ display: "flex", gap: 8 }}>
+                  <div className="flex gap-2">
                     {isEditing ? (
                       <>
-                        <button className="btn btn--primary btn--sm" onClick={saveEdit}>Save</button>
-                        <button className="btn btn--ghost btn--sm" onClick={cancelEdit}>Cancel</button>
+                        <button className="btn btn--primary btn--sm w-auto" onClick={saveEdit}>Save</button>
+                        <button className="btn btn--ghost btn--sm w-auto" onClick={cancelEdit}>Cancel</button>
                         <button
-                          className="btn btn--danger btn--sm"
+                          className="btn btn--danger btn--sm w-auto"
                           onClick={() => {
-                            if (confirm(`Delete this ownership?`)) onDeleteOwnership(o.id);
+                            if (confirm("Delete this ownership?")) onDeleteOwnership(o.id);
                           }}
                         >
                           Delete
@@ -287,9 +274,9 @@ export default function OwnershipForm({
                       </>
                     ) : (
                       <>
-                        <button className="btn btn--ghost btn--sm" onClick={() => beginEdit(o)}>Edit</button>
+                        <button className="btn btn--ghost btn--sm w-auto" onClick={() => beginEdit(o)}>Edit</button>
                         <button
-                          className="btn btn--danger btn--sm"
+                          className="btn btn--danger btn--sm w-auto"
                           onClick={() => {
                             if (confirm(`Delete ${ownerLabel(o)} → ${objectLabel(o)}?`)) onDeleteOwnership(o.id);
                           }}

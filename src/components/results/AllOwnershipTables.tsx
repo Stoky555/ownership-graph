@@ -68,140 +68,47 @@ export default function AllOwnershipTables({
   );
 
   return (
-    <div style={{ display: "grid", gap: 16 }}>
+    <div className="grid gap-4">
       {/* Search + scope */}
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 12,
-          alignItems: "center",
-          background: "#f1f5f9",
-          padding: "8px 12px",
-          border: "1px solid #e2e8f0",
-          borderRadius: 8,
-        }}
-      >
+      <div className="flex flex-wrap items-center gap-3 bg-slate-100 p-3 border border-slate-200 rounded-lg">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search owner or object…"
-          style={{
-            flex: "1 1 240px",
-            minWidth: 200,
-            padding: "8px 10px",
-            border: "1px solid #cbd5e1",
-            borderRadius: 6,
-            outline: "none",
-          }}
+          className="entity-input flex-[1_1_240px] min-w-[200px]"
         />
-        <button
-          type="button"
-          onClick={() => setQuery("")}
-          style={{
-            background: "#334155",
-            color: "#fff",
-            border: "none",
-            padding: "8px 10px",
-            fontSize: 12,
-            borderRadius: 6,
-            cursor: "pointer",
-          }}
-        >
+        <button type="button" onClick={() => setQuery("")} className="btn w-auto btn--ghost text-sm">
           Clear
         </button>
 
-        <ScopeToggle
-          label="Direct"
-          checked={scope.direct}
-          onChange={(v) => setScope((s) => ({ ...s, direct: v }))}
-        />
-        <ScopeToggle
-          label="Indirect"
-          checked={scope.indirect}
-          onChange={(v) => setScope((s) => ({ ...s, indirect: v }))}
-        />
-        <ScopeToggle
-          label="Direct • Obj"
-          checked={scope.directGroupedObject}
-          onChange={(v) => setScope((s) => ({ ...s, directGroupedObject: v }))}
-        />
-        <ScopeToggle
-          label="Direct • Owner"
-          checked={scope.directGroupedOwner}
-          onChange={(v) => setScope((s) => ({ ...s, directGroupedOwner: v }))}
-        />
-        <ScopeToggle
-          label="Indirect • Obj"
-          checked={scope.indirectGroupedObject}
-          onChange={(v) => setScope((s) => ({ ...s, indirectGroupedObject: v }))}
-        />
-        <ScopeToggle
-          label="Indirect • Owner"
-          checked={scope.indirectGroupedOwner}
-          onChange={(v) => setScope((s) => ({ ...s, indirectGroupedOwner: v }))}
-        />
+        <ScopeToggle label="Direct" checked={scope.direct} onChange={(v) => setScope((s) => ({ ...s, direct: v }))} />
+        <ScopeToggle label="Indirect" checked={scope.indirect} onChange={(v) => setScope((s) => ({ ...s, indirect: v }))} />
+        <ScopeToggle label="Direct • Obj" checked={scope.directGroupedObject} onChange={(v) => setScope((s) => ({ ...s, directGroupedObject: v }))} />
+        <ScopeToggle label="Direct • Owner" checked={scope.directGroupedOwner} onChange={(v) => setScope((s) => ({ ...s, directGroupedOwner: v }))} />
+        <ScopeToggle label="Indirect • Obj" checked={scope.indirectGroupedObject} onChange={(v) => setScope((s) => ({ ...s, indirectGroupedObject: v }))} />
+        <ScopeToggle label="Indirect • Owner" checked={scope.indirectGroupedOwner} onChange={(v) => setScope((s) => ({ ...s, indirectGroupedOwner: v }))} />
       </div>
 
       {/* Flat tables */}
-      {scope.direct && (
-        <OwnershipTable title="Direct Ownership Connections" rows={directRowsFiltered} />
-      )}
-      {scope.indirect && (
-        <OwnershipTable title="Indirect Ownership Connections" rows={indirectRowsFiltered} />
-      )}
+      {scope.direct && <OwnershipTable title="Direct Ownership Connections" rows={directRowsFiltered} />}
+      {scope.indirect && <OwnershipTable title="Indirect Ownership Connections" rows={indirectRowsFiltered} />}
 
       {/* Grouped tables */}
-      {scope.directGroupedObject && (
-        <GroupList title="Direct grouped by Object" groups={directByObject} label="Owner" />
-      )}
-      {scope.directGroupedOwner && (
-        <GroupList
-          title="Direct grouped by Owner (Entity/Object)"
-          groups={directByOwner}
-          label="Object"
-        />
-      )}
-      {scope.indirectGroupedObject && (
-        <GroupList title="Indirect grouped by Object" groups={indirectByObject} label="Owner" />
-      )}
-      {scope.indirectGroupedOwner && (
-        <GroupList title="Indirect grouped by Owner" groups={indirectByOwner} label="Object" />
-      )}
+      {scope.directGroupedObject && <GroupList title="Direct grouped by Object" groups={directByObject} label="Owner" />}
+      {scope.directGroupedOwner && <GroupList title="Direct grouped by Owner (Entity/Object)" groups={directByOwner} label="Object" />}
+      {scope.indirectGroupedObject && <GroupList title="Indirect grouped by Object" groups={indirectByObject} label="Owner" />}
+      {scope.indirectGroupedOwner && <GroupList title="Indirect grouped by Owner" groups={indirectByOwner} label="Object" />}
     </div>
   );
 }
 
 function ScopeToggle({
-  label,
-  checked,
-  onChange,
-}: {
-  label: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
+  label, checked, onChange,
+}: { label: string; checked: boolean; onChange: (v: boolean) => void; }) {
   return (
-    <label
-      style={{
-        display: "inline-flex",
-        gap: 8,
-        alignItems: "center",
-        background: checked ? "#2563eb" : "#e2e8f0",
-        color: checked ? "#fff" : "#0f172a",
-        padding: "6px 10px",
-        borderRadius: 6,
-        fontSize: 12,
-        cursor: "pointer",
-      }}
-    >
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-        style={{ margin: 0 }}
-      />
+    <label className={`scope-chip ${checked ? "scope-chip--on" : "scope-chip--off"}`}>
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="m-0" />
       {label}
     </label>
   );
@@ -228,40 +135,29 @@ function groupRows(rows: TotalRow[], by: "object" | "owner"): Group[] {
 
 function GroupList({ title, groups, label }: { title: string; groups: Group[]; label: "Owner" | "Object" }) {
   return (
-    <div style={{ border: "1px solid #e2e8f0", borderRadius: 8, background: "#fff", overflow: "hidden" }}>
-      <div style={{ padding: "10px 14px", fontWeight: 600, background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
-        {title}
-      </div>
-      <div style={{ padding: 12, display: "grid", gap: 14 }}>
-        {groups.length === 0 && <div style={{ color: "#64748b", fontSize: 14 }}>No data.</div>}
+    <div className="panel">
+      <div className="panel-header">{title}</div>
+      <div className="p-3 grid gap-3.5">
+        {groups.length === 0 && <div className="text-slate-500 text-sm">No data.</div>}
         {groups.map((g) => (
-          <div key={g.group} style={{ border: "1px solid #e5e7eb", borderRadius: 6, overflow: "hidden" }}>
-            <div
-              style={{
-                padding: "6px 10px",
-                fontWeight: 600,
-                background: "#f8fafc",
-                display: "flex",
-                justifyContent: "space-between",
-                fontSize: 13,
-              }}
-            >
+          <div key={g.group} className="border border-slate-200 rounded-md overflow-hidden">
+            <div className="px-2.5 py-1.5 font-semibold bg-slate-50 flex justify-between text-[13px]">
               <span>{g.group}</span>
-              <span style={{ color: "#64748b" }}>{g.total.toFixed(2)}%</span>
+              <span className="text-slate-500">{g.total.toFixed(2)}%</span>
             </div>
-            <div style={{ overflowX: "auto" }}>
-              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 420 }}>
+            <div className="table-wrap">
+              <table className="tbl min-w-[420px]">
                 <thead>
                   <tr>
                     <Th>{label}</Th>
-                    <Th style={{ textAlign: "right" }}>Percent</Th>
+                    <Th className="text-right">Percent</Th>
                   </tr>
                 </thead>
                 <tbody>
                   {g.items.map((r, i) => (
-                    <tr key={i} style={i % 2 ? { background: "#f9fafb" } : undefined}>
+                    <tr key={i} className={i % 2 ? "tr-alt" : ""}>
                       <Td>{label === "Owner" ? r.owner : r.object}</Td>
-                      <Td style={{ textAlign: "right", fontWeight: 600 }}>{r.percent.toFixed(2)}%</Td>
+                      <Td className="text-right font-semibold">{r.percent.toFixed(2)}%</Td>
                     </tr>
                   ))}
                 </tbody>
@@ -274,28 +170,10 @@ function GroupList({ title, groups, label }: { title: string; groups: Group[]; l
   );
 }
 
-const Th: React.FC<React.HTMLAttributes<HTMLTableCellElement>> = (p) => (
-  <th
-    {...p}
-    style={{
-      padding: "6px 10px",
-      textAlign: "left",
-      borderBottom: "1px solid #e2e8f0",
-      fontWeight: 600,
-      color: "#0f172a",
-      ...p.style,
-    }}
-  />
+const Th: React.FC<React.HTMLAttributes<HTMLTableCellElement>> = ({ className = "", ...p }) => (
+  <th {...p} className={`th ${className}`} />
 );
 
-const Td: React.FC<React.HTMLAttributes<HTMLTableCellElement>> = (p) => (
-  <td
-    {...p}
-    style={{
-      padding: "6px 10px",
-      borderBottom: "1px solid #f1f5f9",
-      color: "#0f172a",
-      ...p.style,
-    }}
-  />
+const Td: React.FC<React.HTMLAttributes<HTMLTableCellElement>> = ({ className = "", ...p }) => (
+  <td {...p} className={`td ${className}`} />
 );

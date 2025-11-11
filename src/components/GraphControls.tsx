@@ -24,111 +24,87 @@ export default function GraphControls({
 }) {
   const [showEdgePanels, setShowEdgePanels] = useState(true);
 
-  // shared button style helper
-  const buttonStyle = (active: boolean): React.CSSProperties => ({
-    display: "block",
-    width: "100%",
-    textAlign: "left",
-    padding: "6px 10px",
-    borderRadius: 6,
-    border: "1px solid #e5e7eb",
-    background: active ? "#f1f5f9" : "#f1f5f9aa", // slight blur for inactive
-    color: active ? "#111827" : "#9ca3af",
-    fontWeight: 500,
-    cursor: "pointer",
-    transition: "all 0.15s ease-in-out",
-  });
-
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+    <div className="flex flex-col gap-3">
       {/* Toggle edge table visibility */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <label style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+      <div className="flex items-center gap-2">
+        <label className="inline-flex items-center gap-2">
           <input
             type="checkbox"
             checked={showEdgePanels}
             onChange={(e) => setShowEdgePanels(e.target.checked)}
+            className="accent-blue-600"
           />
-          Show edge tables
+          <span>Show edge tables</span>
         </label>
       </div>
 
       {showEdgePanels && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div className="flex flex-col gap-3">
           {/* DIRECT connections */}
-          <div style={{ border: "1px solid #e5e7eb", borderRadius: 8, padding: 10 }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 8,
-              }}
-            >
-              <h4 style={{ margin: 0 }}>Direct ownerships</h4>
-              <div style={{ display: "flex", gap: 6 }}>
-                <button onClick={() => setAllDirect(true)}>Enable all</button>
-                <button onClick={() => setAllDirect(false)}>Disable all</button>
+          <div className="panel">
+            <div className="panel-header">
+              <h4 className="m-0">Direct ownerships</h4>
+              <div className="flex gap-2">
+                <button className="btn w-auto btn--ghost" onClick={() => setAllDirect(true)}>Enable all</button>
+                <button className="btn w-auto btn--ghost" onClick={() => setAllDirect(false)}>Disable all</button>
               </div>
             </div>
-            <div style={{ maxHeight: 200, overflowY: "auto", display: "grid", gap: 6 }}>
-              {directList.map((row) => {
-                const active = !hiddenDirectIds.has(row.id);
-                return (
-                  <button
-                    key={row.id}
-                    onClick={() => toggleDirect(row.id)}
-                    style={buttonStyle(active)}
-                  >
-                    {row.ownerLabel} → {row.objectLabel} ({row.percent}%)
-                  </button>
-                );
-              })}
-              {directList.length === 0 && (
-                <div style={{ color: "#6b7280" }}>No direct ownerships.</div>
-              )}
+            <div className="panel-content">
+              <div className="max-h-[200px] overflow-y-auto grid gap-1.5">
+                {directList.map((row) => {
+                  const active = !hiddenDirectIds.has(row.id);
+                  return (
+                    <button
+                      key={row.id}
+                      className={`control-btn ${active ? "control-btn--active" : ""}`}
+                      onClick={() => toggleDirect(row.id)}
+                    >
+                      {row.ownerLabel} → {row.objectLabel} ({row.percent}%)
+                    </button>
+                  );
+                })}
+                {directList.length === 0 && (
+                  <div className="text-slate-500">No direct ownerships.</div>
+                )}
+              </div>
+              <small className="text-slate-500">
+                Click a connection to toggle visibility and inclusion in indirect calculations.
+              </small>
             </div>
-            <small style={{ color: "#6b7280" }}>
-              Click a connection to toggle visibility and inclusion in indirect calculations.
-            </small>
           </div>
 
           {/* INDIRECT connections */}
-          <div style={{ border: "1px solid #e5e7eb", borderRadius: 8, padding: 10 }}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 8,
-              }}
-            >
-              <h4 style={{ margin: 0 }}>Indirect edges</h4>
-              <div style={{ display: "flex", gap: 6 }}>
-                <button onClick={() => setAllIndirect(true)}>Show all</button>
-                <button onClick={() => setAllIndirect(false)}>Hide all</button>
+          <div className="panel">
+            <div className="panel-header">
+              <h4 className="m-0">Indirect edges</h4>
+              <div className="flex gap-2">
+                <button className="btn w-auto btn--ghost" onClick={() => setAllIndirect(true)}>Show all</button>
+                <button className="btn w-auto btn--ghost" onClick={() => setAllIndirect(false)}>Hide all</button>
               </div>
             </div>
-            <div style={{ maxHeight: 220, overflowY: "auto", display: "grid", gap: 6 }}>
-              {indirectList.map((row) => {
-                const active = !hiddenIndirectIds.has(row.id);
-                return (
-                  <button
-                    key={row.id}
-                    onClick={() => toggleIndirect(row.id)}
-                    style={buttonStyle(active)}
-                  >
-                    {row.label} ({row.percent}%)
-                  </button>
-                );
-              })}
-              {indirectList.length === 0 && (
-                <div style={{ color: "#6b7280" }}>No indirect edges.</div>
-              )}
+            <div className="panel-content">
+              <div className="max-h-[220px] overflow-y-auto grid gap-1.5">
+                {indirectList.map((row) => {
+                  const active = !hiddenIndirectIds.has(row.id);
+                  return (
+                    <button
+                      key={row.id}
+                      className={`control-btn ${active ? "control-btn--active" : ""}`}
+                      onClick={() => toggleIndirect(row.id)}
+                    >
+                      {row.label} ({row.percent}%)
+                    </button>
+                  );
+                })}
+                {indirectList.length === 0 && (
+                  <div className="text-slate-500">No indirect edges.</div>
+                )}
+              </div>
+              <small className="text-slate-500">
+                Click a connection to show or hide it from the graph.
+              </small>
             </div>
-            <small style={{ color: "#6b7280" }}>
-              Click a connection to show or hide it from the graph.
-            </small>
           </div>
         </div>
       )}

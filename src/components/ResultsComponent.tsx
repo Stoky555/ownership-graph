@@ -27,15 +27,15 @@ export default function ResultsComponent({ entities, objects, ownerships }: Prop
   if (ownerships.length === 0) {
     return (
       <div>
-        <h2 style={{ marginTop: 0 }}>Results</h2>
-        <p style={{ color: "#6b7280" }}>No ownership data yet. Add some first.</p>
+        <h2 className="mt-0">Results</h2>
+        <p className="text-slate-500">No ownership data yet. Add some first.</p>
       </div>
     );
   }
 
   return (
     <div>
-      <h2 style={{ marginTop: 0 }}>Results</h2>
+      <h2 className="mt-0">Results</h2>
       <Tabs
         tabs={[
           { key: "tables", label: "Ownership tables" },
