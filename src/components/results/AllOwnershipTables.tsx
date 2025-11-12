@@ -29,14 +29,39 @@ export default function AllOwnershipTables({
     indirectGroupedOwner: true,
   });
 
+  // Build a fast lookup of direct edges: "entity:<id>|object:<id>=>objectId"
+  const directEdgeKeys = useMemo(
+    () => new Set(ownerships.map(o => `${o.owner.kind}:${o.owner.id}=>${o.objectId}`)),
+    [ownerships]
+  );
+
+  // Exclude direct connections from indirect totals (for object-shaped totals)
+  const indirectTotalsFiltered = useMemo(() => {
+    const t = indirectTotals;
+    // Only handle plain object: { [ownerKey]: { [objectId]: percent } }
+    if (t && typeof t === "object" && !Array.isArray(t) && !(t instanceof Map)) {
+      const out: Record<string, Record<string, number>> = {};
+      for (const [ownerKey, objMap] of Object.entries(t as Record<string, Record<string, number>>)) {
+        const filtered: Record<string, number> = {};
+        for (const [objectId, pct] of Object.entries(objMap || {})) {
+          if (!directEdgeKeys.has(`${ownerKey}=>${objectId}`)) filtered[objectId] = pct as number;
+        }
+        if (Object.keys(filtered).length) out[ownerKey] = filtered;
+      }
+      return out;
+    }
+    // Leave arrays/Maps as-is (not our current path)
+    return t;
+  }, [indirectTotals, directEdgeKeys]);
+
   const directRows: TotalRow[] = useMemo(
     () => buildDirectRows(directTotals, ownerships, entities, objects).sort((a, b) => b.percent - a.percent),
     [directTotals, ownerships, entities, objects]
   );
 
   const indirectRows: TotalRow[] = useMemo(
-    () => buildIndirectRows(indirectTotals, entities, objects).sort((a, b) => b.percent - a.percent),
-    [indirectTotals, entities, objects]
+    () => buildIndirectRows(indirectTotalsFiltered, entities, objects).sort((a, b) => b.percent - a.percent),
+    [indirectTotalsFiltered, entities, objects]
   );
 
   const applyFilter = (rows: TotalRow[], enabled: boolean) => {
@@ -97,14 +122,14 @@ export default function AllOwnershipTables({
         <OwnershipTable
           title="Direct Ownership Connections"
           rows={directRowsFiltered}
-          help="Each row is a direct ownership from an owner (entity or object) to an object. Percent is the declared direct share. Use this to validate inputs. Totals per object appear in the grouped tables."
+          help="Each row is a direct ownership from an owner (entity or object) to an object. Percent is the declared direct share. Totals per object appear in the grouped tables."
         />
       )}
       {scope.indirect && (
         <OwnershipTable
           title="Indirect Ownership Connections"
           rows={indirectRowsFiltered}
-          help="Effective ownership computed along all paths (products of percentages). Includes direct edges. If any object's direct owners sum > 100%, some indirect totals will exceed 100%."
+          help="Effective ownership through paths of length ≥ 2 (excludes direct edges). Computed by multiplying percentages along chains."
         />
       )}
 
@@ -130,7 +155,7 @@ export default function AllOwnershipTables({
           title="Indirect grouped by Object"
           groups={indirectByObject}
           label="Owner"
-          help="For each object, shows effective ownership from every upstream owner (entities and objects). Values come from multiplying percentages along all ownership chains."
+          help="For each object, shows effective ownership from upstream owners via intermediate objects. Direct edges are excluded here."
         />
       )}
       {scope.indirectGroupedOwner && (
@@ -138,7 +163,7 @@ export default function AllOwnershipTables({
           title="Indirect grouped by Owner"
           groups={indirectByOwner}
           label="Object"
-          help="For each owner, shows their effective ownership in each object via any number of intermediate objects."
+          help="For each owner, shows effective ownership in each object via intermediate objects only (no direct edges)."
         />
       )}
     </div>
