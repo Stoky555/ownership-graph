@@ -66,6 +66,18 @@ export default function NewCalculationPage() {
   }, []);
 
   const onAddOwnership = () => {
+    const percent = parseFloat(ownershipPercent);
+    if (!selectedObjectId || !Number.isFinite(percent) || percent <= 0) return;
+
+    const currentTotal = ownerships
+      .filter(o => o.objectId === selectedObjectId)
+      .reduce((s, o) => s + o.percent, 0);
+
+    if (currentTotal + percent > 100.0001) {
+      alert(`Direct ownership for this object would exceed 100% (current ${currentTotal.toFixed(2)}%).`);
+      return;
+    }
+
     // Validate owner
     let ownerId: string | null = null;
     if (ownerKind === "entity") ownerId = ownerEntityId || null;

@@ -93,14 +93,54 @@ export default function AllOwnershipTables({
       </div>
 
       {/* Flat tables */}
-      {scope.direct && <OwnershipTable title="Direct Ownership Connections" rows={directRowsFiltered} />}
-      {scope.indirect && <OwnershipTable title="Indirect Ownership Connections" rows={indirectRowsFiltered} />}
+      {scope.direct && (
+        <OwnershipTable
+          title="Direct Ownership Connections"
+          rows={directRowsFiltered}
+          help="Each row is a direct ownership from an owner (entity or object) to an object. Percent is the declared direct share. Use this to validate inputs. Totals per object appear in the grouped tables."
+        />
+      )}
+      {scope.indirect && (
+        <OwnershipTable
+          title="Indirect Ownership Connections"
+          rows={indirectRowsFiltered}
+          help="Effective ownership computed along all paths (products of percentages). Includes direct edges. If any object's direct owners sum > 100%, some indirect totals will exceed 100%."
+        />
+      )}
 
       {/* Grouped tables */}
-      {scope.directGroupedObject && <GroupList title="Direct grouped by Object" groups={directByObject} label="Owner" />}
-      {scope.directGroupedOwner && <GroupList title="Direct grouped by Owner (Entity/Object)" groups={directByOwner} label="Object" />}
-      {scope.indirectGroupedObject && <GroupList title="Indirect grouped by Object" groups={indirectByObject} label="Owner" />}
-      {scope.indirectGroupedOwner && <GroupList title="Indirect grouped by Owner" groups={indirectByOwner} label="Object" />}
+      {scope.directGroupedObject && (
+        <GroupList
+          title="Direct grouped by Object"
+          groups={directByObject}
+          label="Owner"
+          help="For each object, sums of direct ownership by its owners. The badge shows the object's total direct ownership; it should be ≤ 100%."
+        />
+      )}
+      {scope.directGroupedOwner && (
+        <GroupList
+          title="Direct grouped by Owner (Entity/Object)"
+          groups={directByOwner}
+          label="Object"
+          help="For each owner, shows all objects they directly own and the corresponding percentages."
+        />
+      )}
+      {scope.indirectGroupedObject && (
+        <GroupList
+          title="Indirect grouped by Object"
+          groups={indirectByObject}
+          label="Owner"
+          help="For each object, shows effective ownership from every upstream owner (entities and objects). Values come from multiplying percentages along all ownership chains."
+        />
+      )}
+      {scope.indirectGroupedOwner && (
+        <GroupList
+          title="Indirect grouped by Owner"
+          groups={indirectByOwner}
+          label="Object"
+          help="For each owner, shows their effective ownership in each object via any number of intermediate objects."
+        />
+      )}
     </div>
   );
 }
@@ -154,38 +194,74 @@ function groupRows(rows: TotalRow[], by: "object" | "owner"): Group[] {
   return groups;
 }
 
-function GroupList({ title, groups, label }: { title: string; groups: Group[]; label: "Owner" | "Object" }) {
+function GroupList({ title, groups, label, help }: { title: string; groups: Group[]; label: "Owner" | "Object"; help?: string }) {
+  const [openId, setOpenId] = useState<boolean>(false);
+
   return (
     <div className="panel">
-      <div className="panel-header">{title}</div>
+      <div className="panel-header">
+        <span>{title}</span>
+        {help && (
+          <button
+            type="button"
+            className="btn btn--ghost btn--xs w-auto"
+            onClick={() => setOpenId((v) => !v)}
+            aria-expanded={openId}
+            aria-label="About this table"
+            title="About this table"
+          >
+            ?
+          </button>
+        )}
+      </div>
+
+      {help && openId && (
+        <div className="px-3 py-2 text-xs sm:text-sm text-slate-700 bg-slate-50 border-b border-slate-200">
+          {help}
+        </div>
+      )}
+
       <div className="p-3 grid gap-3.5">
         {groups.length === 0 && <div className="text-slate-500 text-sm">No data.</div>}
-        {groups.map((g) => (
-          <div key={g.group} className="border border-slate-200 rounded-md overflow-hidden">
-            <div className="px-2.5 py-1.5 font-semibold bg-slate-50 flex justify-between text-[13px]">
-              <span>{g.group}</span>
-              <span className="text-slate-500">{g.total.toFixed(2)}%</span>
-            </div>
-            <div className="table-wrap">
-              <table className="tbl min-w-[420px]">
-                <thead>
-                  <tr>
-                    <Th>{label}</Th>
-                    <Th className="text-right">Percent</Th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {g.items.map((r, i) => (
-                    <tr key={i} className={i % 2 ? "tr-alt" : ""}>
-                      <Td>{label === "Owner" ? r.owner : r.object}</Td>
-                      <Td className="text-right font-semibold">{r.percent.toFixed(2)}%</Td>
+        {groups.map((g) => {
+          const over = g.total - 100;
+          const status =
+            g.total === 0 ? "—" :
+            over > 0 ? `Exceeds by ${over.toFixed(2)}%` :
+            Math.abs(g.total - 100) < 0.01 ? "≈ 100%" : `${g.total.toFixed(2)}%`;
+          const badgeClass =
+            g.total === 0 ? "bg-slate-200 text-slate-700" :
+            over > 0 ? "bg-red-600 text-white" : "bg-emerald-600 text-white";
+
+          return (
+            <div key={g.group} className="border border-slate-200 rounded-md overflow-hidden">
+              <div className="px-2.5 py-1.5 font-semibold bg-slate-50 flex items-center justify-between text-[13px]">
+                <span>{g.group}</span>
+                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] ${badgeClass}`}>
+                  {status}
+                </span>
+              </div>
+              <div className="table-wrap">
+                <table className="tbl min-w-[420px]">
+                  <thead>
+                    <tr>
+                      <Th>{label}</Th>
+                      <Th className="text-right">Percent</Th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {g.items.map((r, i) => (
+                      <tr key={i} className={i % 2 ? "tr-alt" : ""}>
+                        <Td>{label === "Owner" ? r.owner : r.object}</Td>
+                        <Td className="text-right font-semibold">{r.percent.toFixed(2)}%</Td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

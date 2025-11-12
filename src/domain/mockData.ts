@@ -52,7 +52,7 @@ export const mockOwnerships: Ownership[] = [
 
   // Converge into 9
   makeOwnership({ kind: "object", id: "5" }, "9", 12),
-  makeOwnership({ kind: "object", id: "6" }, "9", 63),
+  makeOwnership({ kind: "object", id: "6" }, "9", 53),
   makeOwnership({ kind: "object", id: "8" }, "9", 35),
 
   // Terminal edge
