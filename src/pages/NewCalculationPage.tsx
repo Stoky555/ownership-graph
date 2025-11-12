@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { OwnedObject, Entity, Ownership } from "../domain/types";
 import { useNavigate } from "react-router-dom";
 import SectionTabs from "../components/SectionTabs";
 import NewCalcSection from "../components/NewCalcSection";
 import { mockEntities, mockObjects, mockOwnerships } from "../domain/mockData";
+import { exportCalculation, parseCalculation, readFileAsText } from "../utils/fileIO";
 
 export default function NewCalculationPage() {
   const [section, setSection] = useState<"objects" | "entities" | "ownership" | "result">("objects");
@@ -139,30 +140,66 @@ export default function NewCalculationPage() {
   const onDeleteOwnership = (id: string) =>
     setOwnerships(prev => prev.filter(o => o.id !== id));
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const onExportJson = () => {
+    exportCalculation({
+      version: 1,
+      meta: { createdAt: new Date().toISOString() },
+      entities,
+      objects,
+      ownerships,
+    });
+  };
+
+  const onClickImport = () => fileInputRef.current?.click();
+
+  const onImportFile: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const text = await readFileAsText(file);
+      const data = parseCalculation(text);
+      // optional confirm to replace
+      if (!confirm("Import will replace current data. Continue?")) return;
+      setEntities(data.entities);
+      setObjects(data.objects);
+      setOwnerships(data.ownerships);
+      // Reset transient UI
+      setOwnerEntityId(""); setOwnerObjectOwnerId(""); setOwnershipPercent(""); setSelectedObjectId("");
+      setSection(data.ownerships.length ? "result" : "objects");
+    } catch (err: any) {
+      alert(`Failed to import JSON: ${err?.message ?? err}`);
+    } finally {
+      e.target.value = ""; // allow re-selecting the same file
+    }
+  };
+
   return (
     <main className="app-shell">
       <header className="mb-8">
         <h1 className="text-2xl sm:text-3xl font-extrabold">New Calculation</h1>
       </header>
 
-      {/* Keep tabs visible on result. If you want to hide them too, wrap in section !== "result". */}
       <SectionTabs value={section} onChange={setSection} />
 
       {section !== "result" && (
         <div className="flex flex-wrap gap-2 mb-3">
-          <button className="btn btn--sm w-auto bg-cyan-500 hover:bg-cyan-600" onClick={loadSample}>
-            ⤓ Load sample data
-          </button>
-          <button className="btn btn--sm w-auto btn--danger" onClick={clearAll}>
-            ✖ Clear all
-          </button>
-          <button
-            className="btn w-auto bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed"
-            onClick={() => setSection("result")}
-            disabled={ownerships.length === 0}
-          >
-            ▶ Start calculation
-          </button>
+          <button className="btn btn--sm w-auto bg-cyan-500 hover:bg-cyan-600" onClick={loadSample}>⤓ Load sample data</button>
+          <button className="btn btn--sm w-auto btn--danger" onClick={clearAll}>✖ Clear all</button>
+          <button className="btn w-auto bg-emerald-500 hover:bg-emerald-600 disabled:opacity-60 disabled:cursor-not-allowed" onClick={() => setSection("result")} disabled={ownerships.length === 0}>▶ Start calculation</button>
+
+          {/* New: Export/Import */}
+          <span className="mx-1 hidden sm:inline">|</span>
+          <button className="btn btn--ghost btn--sm w-auto" onClick={onExportJson}>⇩ Export JSON</button>
+          <button className="btn btn--ghost btn--sm w-auto" onClick={onClickImport}>⇧ Import JSON</button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json"
+            className="hidden"
+            onChange={onImportFile}
+          />
         </div>
       )}
 
