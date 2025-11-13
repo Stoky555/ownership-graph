@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import type { Entity, OwnedObject, Ownership } from "../../domain/types";
-import { buildDirectRows, buildIndirectRows, type TotalRow } from "./normalizeTotals";
-import OwnershipTable from "./OwnershipTable";
+import type { Entity, OwnedObject, Ownership } from "../../../domain/types";
+import OwnershipTable, { TotalRow } from "./OwnershipTable";
+import { buildDirectRows, buildIndirectRows } from "../../../domain/normalizeTotals";
 
 type Props = {
   entities: Entity[];
@@ -35,24 +35,39 @@ export default function AllOwnershipTables({
     [ownerships]
   );
 
+  // Build fast lookup of direct edges using NAMES, because indirect totals are keyed by names
+  const idToEntityName = useMemo(() => new Map(entities.map(e => [e.id, e.name])), [entities]);
+  const idToObjectName = useMemo(() => new Map(objects.map(o => [o.id, o.name])), [objects]);
+
+  const directNameEdgeKeys = useMemo(() => {
+    const s = new Set<string>();
+    for (const o of ownerships) {
+      const ownerName =
+        o.owner.kind === "entity"
+          ? idToEntityName.get(o.owner.id) ?? `entity:${o.owner.id}`
+          : idToObjectName.get(o.owner.id) ?? `object:${o.owner.id}`;
+      const objectName = idToObjectName.get(o.objectId) ?? `object:${o.objectId}`;
+      s.add(`${ownerName}=>${objectName}`);
+    }
+    return s;
+  }, [ownerships, idToEntityName, idToObjectName]);
+
   // Exclude direct connections from indirect totals (for object-shaped totals)
   const indirectTotalsFiltered = useMemo(() => {
-    const t = indirectTotals;
-    // Only handle plain object: { [ownerKey]: { [objectId]: percent } }
-    if (t && typeof t === "object" && !Array.isArray(t) && !(t instanceof Map)) {
-      const out: Record<string, Record<string, number>> = {};
-      for (const [ownerKey, objMap] of Object.entries(t as Record<string, Record<string, number>>)) {
-        const filtered: Record<string, number> = {};
-        for (const [objectId, pct] of Object.entries(objMap || {})) {
-          if (!directEdgeKeys.has(`${ownerKey}=>${objectId}`)) filtered[objectId] = pct as number;
+    const t = indirectTotals as Record<string, Record<string, number>>;
+    if (!t || typeof t !== "object") return t;
+    const out: Record<string, Record<string, number>> = {};
+    for (const [ownerName, objMap] of Object.entries(t)) {
+      const filtered: Record<string, number> = {};
+      for (const [objectName, pct] of Object.entries(objMap || {})) {
+        if (!directNameEdgeKeys.has(`${ownerName}=>${objectName}`)) {
+          filtered[objectName] = pct;
         }
-        if (Object.keys(filtered).length) out[ownerKey] = filtered;
       }
-      return out;
+      if (Object.keys(filtered).length) out[ownerName] = filtered;
     }
-    // Leave arrays/Maps as-is (not our current path)
-    return t;
-  }, [indirectTotals, directEdgeKeys]);
+    return out;
+  }, [indirectTotals, directNameEdgeKeys]);
 
   const directRows: TotalRow[] = useMemo(
     () => buildDirectRows(directTotals, ownerships, entities, objects).sort((a, b) => b.percent - a.percent),

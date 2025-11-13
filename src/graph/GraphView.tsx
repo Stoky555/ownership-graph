@@ -2,11 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import ReactFlow, { Background, Controls, applyNodeChanges, type Node as RFNode, type Edge as RFEdge, type OnNodesChange } from "reactflow";
 import "reactflow/dist/style.css";
 import type { Entity, OwnedObject, Ownership } from "../domain/types";
-import GraphControls from "./GraphControls";
 import { useOwnershipLayers } from "../hooks/useOwnershipLayers";
 import { buildGraph } from "../graph/buildGraph";
 import BubbleNode from "../graph/BubbleNode";
 import { SimpleBezierEdge } from "reactflow";
+import GraphControls from "./GraphControls";
 
 const nodeTypes = { bubble: BubbleNode };
 const edgeTypes = { simplebezier: SimpleBezierEdge };

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import type { OwnedObject, Entity, Ownership } from "../domain/types";
 import { useNavigate } from "react-router-dom";
-import SectionTabs from "../components/SectionTabs";
-import NewCalcSection from "../components/NewCalcSection";
-import { mockEntities, mockObjects, mockOwnerships } from "../domain/mockData";
+import { Entity, OwnedObject, Ownership } from "../domain/types";
 import { exportCalculation, parseCalculation, readFileAsText } from "../utils/fileIO";
+import { mockEntities, mockObjects, mockOwnerships } from "../domain/mockData";
+import NewCalcSection from "../features/calculation/components/NewCalcSection";
+import SectionTabs from "../features/calculation/components/SectionTabs";
 
 export default function NewCalculationPage() {
   const [section, setSection] = useState<"objects" | "entities" | "ownership" | "result">("objects");

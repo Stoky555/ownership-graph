@@ -1,6 +1,6 @@
 // src/components/ObjectsForm.tsx
 import { useState } from "react";
-import type { OwnedObject } from "../domain/types";
+import { OwnedObject } from "../../../domain/types";
 
 type Props = {
   objects: OwnedObject[];

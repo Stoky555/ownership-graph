@@ -1,6 +1,6 @@
 // src/components/OwnershipForm.tsx
 import { useMemo, useState } from "react";
-import type { Entity, OwnedObject, Ownership } from "../domain/types";
+import { Entity, OwnedObject, Ownership } from "../../../domain/types";
 
 type OwnerKind = "entity" | "object";
 

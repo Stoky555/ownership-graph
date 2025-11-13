@@ -1,4 +1,4 @@
-import type { Entity, OwnedObject, Ownership } from "../../domain/types";
+import { Ownership, Entity, OwnedObject } from "./types";
 
 export type TotalRow = { owner: string; object: string; percent: number };
 

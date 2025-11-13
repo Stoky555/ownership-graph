@@ -1,4 +1,4 @@
-import type { Entity, OwnedObject, Ownership } from "../../domain/types";
+import type { Entity, OwnedObject, Ownership } from "../../../domain/types";
 
 type Props = {
   entities: Entity[];

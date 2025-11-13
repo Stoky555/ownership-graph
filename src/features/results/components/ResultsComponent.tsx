@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { calculateDirectOwnershipNames, calculateIndirectOwnershipNames } from "../domain/calculateIndirectOwnershipIds";
-import type { Entity, OwnedObject, Ownership } from "../domain/types";
+import { calculateDirectOwnershipNames, calculateIndirectOwnershipNames } from "../../../domain/calculateIndirectOwnershipIds";
+import type { Entity, OwnedObject, Ownership } from "../../../domain/types";
 
-import Tabs from "./ui/Tabs";
-import GraphSection from "./results/GraphSection";
-import AllOwnershipTables from "./results/AllOwnershipTables";
+import Tabs from "../../../ui/Tabs";
+import GraphSection from "./GraphSection";
+import AllOwnershipTables from "./AllOwnershipTables";
 
 type Props = {
   entities: Entity[];

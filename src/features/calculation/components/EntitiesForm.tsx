@@ -1,6 +1,6 @@
 // src/components/EntitiesForm.tsx
 import { useState } from "react";
-import type { Entity } from "../domain/types";
+import { Entity } from "../../../domain/types";
 
 type Props = {
   entities: Entity[];

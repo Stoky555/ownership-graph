@@ -1,5 +1,5 @@
-import type { Entity, OwnedObject, Ownership } from "../../domain/types";
-import GraphView from "../GraphView";
+import type { Entity, OwnedObject, Ownership } from "../../../domain/types";
+import GraphView from "../../../graph/GraphView";
 
 type Props = {
   entities: Entity[];

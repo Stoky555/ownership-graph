@@ -2,8 +2,8 @@
 import ObjectsForm from "./ObjectsForm";
 import EntitiesForm from "./EntitiesForm";
 import OwnershipForm from "./OwnershipForm";
-import type { Entity, OwnedObject, Ownership } from "../domain/types";
-import ResultsComponent from "./ResultsComponent";
+import ResultsComponent from "../../results/components/ResultsComponent";
+import { OwnedObject, Entity, Ownership } from "../../../domain/types";
 
 type Section = "objects" | "entities" | "ownership" | "result";
 
